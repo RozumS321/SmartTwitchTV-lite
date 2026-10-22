@@ -116,16 +116,9 @@ var Settings_value = {
         defaultValue: 1
     },
     app_lang: {
-        values: [
-            'English [EN]',
-            'Español - Spanish [ES]',
-            'Français - French [FR]',
-            'Português - Portuguese [PT-BR]',
-            'Русский - Russian [RU]',
-            'Türkçe - Turkish [TR]',
-            'Українська - Ukrainian [UK-UA]'
-        ],
-        apply_values: ['en_US', 'es_Us', 'fr_FR', 'pt_BR', 'ru_RU', 'tr_TR', 'uk_UA'],
+        //this fork ships English, Russian and Ukrainian only
+        values: ['English', 'Русский', 'Українська'],
+        apply_values: ['en_US', 'ru_RU', 'uk_UA'],
         defaultValue: 1
     },
     loadAll_lang: {
@@ -1366,12 +1359,8 @@ function Settings_SetAppLang() {
 
     en_USLang();
 
-    if (Main_A_includes_B(app_lang, 'pt_')) pt_BRLang();
-    else if (Main_A_includes_B(app_lang, 'ru_')) ru_RULang();
-    else if (Main_A_includes_B(app_lang, 'es_')) es_ESLang();
-    else if (Main_A_includes_B(app_lang, 'fr_')) fr_FRLang();
+    if (Main_A_includes_B(app_lang, 'ru_')) ru_RULang();
     else if (Main_A_includes_B(app_lang, 'uk_')) uk_UALang();
-    else if (Main_A_includes_B(app_lang, 'tr_')) tr_TRLang();
 
     OSInterface_SetLanguage(app_lang);
 
