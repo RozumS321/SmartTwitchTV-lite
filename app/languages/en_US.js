@@ -124,6 +124,8 @@ function en_USLang() {
     STR_HOME = 'Home';
     STR_HOME_LIVE = 'Followed live';
     STR_FOLLOWED_GAMES = 'My categories';
+    //Welcome dialog remote tips (Main_showWelcomeDialog)
+    STR_WELCOME_TIPS = ['Left or Back opens the menu', 'Hold OK to refresh, hold left for card actions', 'In the player: up for the live feed, down for chat', 'Everything else is in Settings'];
     //Settings sections (Settings_Groups): title, hint
     STR_SETTINGS_GROUPS = [
         ['General', 'Language, content, start'],
@@ -159,8 +161,8 @@ function en_USLang() {
     STR_MS = 'Ms';
     STR_HR = 'Hr';
     STR_SOURCE = 'Source';
-    STR_TWITCH_TV = 'SmartTV Client for Twitch';
-    STR_CLOSE_THIS = 'Press return or enter to close this';
+    STR_TWITCH_TV = 'SmartTwitchTV lite';
+    STR_CLOSE_THIS = 'OK or Back to close';
     STR_CLOSE_THIS2 = 'Press return to close this';
     STR_CLOSE_THIS3 = 'Press return to show the update dialog or enter to close this';
     STR_PLAYER = 'Player related:';
@@ -177,8 +179,7 @@ function en_USLang() {
         'Start a search: In the side panel, click search, type in your query, and press enter on the virtual keyboard, then choose one of the searching options';
     STR_CONTROLS_MAIN_14 = 'About this application: Click about in the side panel';
     STR_ABOUT_INFO_1 = 'This is an Android TV Twitch Client, released for free to anyone who wants to use it.';
-    STR_ABOUT_INFO_2 =
-        'This app has no affiliation with Twitch, this is a user-made app, but is only possible because Twitch provides all the API that allows the app to show the Twitch content.';
+    STR_ABOUT_INFO_2 = 'Not affiliated with Twitch, it works through the public Twitch API';
     STR_ABOUT_INFO_2_SOURCE = 'This version of the app is only for testing in the browser!';
     STR_ABOUT_INFO_3 = 'Contact information:';
     STR_ABOUT_INFO_4 = 'This is an open source application licensed under the GNU General Public License v3.0, check it out on GitHub:';
@@ -503,9 +504,8 @@ function en_USLang() {
     STR_CHAT_DELAY_LATENCY_TO_BROADCASTER = 'Based on ' + STR_LATENCY_TO_BROADCASTER;
     STR_PING = 'Ping to Twitch (Ms):';
     STR_WARNINGS = 'Warnings';
-    STR_WELCOME = 'Welcome to';
-    STR_WELCOME_SUMMARY =
-        'This application has lots and lots of features. Check the app settings and controls to understand how to use it. In doubt, check the Play Store demonstration video, if still unsure, use the contact info.';
+    STR_WELCOME = 'Welcome';
+    STR_WELCOME_SUMMARY = 'A Twitch client for your TV with a fresh look. The basics:';
     STR_WARNING_PHONE = 'Cellphones warning';
     STR_WARNING_PHONE_SUMMARY =
         "This app is designed to be used mainly on TVs, the support for other devices is limited and may never receive a better support. If you don't have a keyboard or a D-pad + enter and return controller (ESC works as a return on a computer), use the virtual on-screen keys to navigate (only visible on phone/tablet devices). In settings you can change the position and the opacity of the virtual D-pad, click anywhere on the screen to show the virtual D-pad. When it's hidden, it doesn't work.";
@@ -816,10 +816,9 @@ function en_USLang() {
     STR_NOT_SUPPORT_BROWSER = 'This is not supported on a browser';
 
     STR_WARNING_BROWSER = 'Browser warning';
-    STR_WARNING_BROWSER_SUMMARY =
-        'This app is designed to be used mainly on TVs, the support for other devices is limited. You can control the app using a mouse but it works better using the keyboard keys up, down, left, right, enter and return controller (ESC works as a return).';
+    STR_WARNING_BROWSER_SUMMARY = 'Made for TVs. A mouse works, but arrow keys, Enter and Esc (Back) are easier';
     STR_THUMB_OPTIONS_CLICK = 'Click twice above an action (to open or apply it), click outside the dialog to exit without applying';
-    STR_CLOSE_THIS_BROWSER = 'Press return, enter or mouse click outside to close this';
+    STR_CLOSE_THIS_BROWSER = 'OK, Back or click outside to close';
 
     STR_DISABLE_EMBED = 'Enable Live and Vod Twitch player';
     STR_DISABLE_EMBED_SUMMARY =

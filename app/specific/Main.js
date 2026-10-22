@@ -875,35 +875,50 @@ function Main_showWelcomeDialog(removeEventListener, addEventListener) {
     Main_removeEventListener('keydown', removeEventListener);
     Main_addEventListener('keydown', addEventListener);
 
-    var phone_warning = '';
+    //A card: logo and title, one line about the app, remote tips with icons, a note for browser or phone, then
+    //the "not affiliated" line and how to close (welcome_* classes in index.html)
+    var note = '';
     if (!Main_isTV) {
-        if (Main_IsOn_OSInterface) {
-            phone_warning = STR_DIV_TITLE + STR_WARNING_PHONE + '</div>' + STR_BR + STR_WARNING_PHONE_SUMMARY + STR_BR + STR_BR;
-        } else {
-            phone_warning = STR_DIV_TITLE + STR_WARNING_BROWSER + '</div>' + STR_BR + STR_WARNING_BROWSER_SUMMARY + STR_BR + STR_BR;
-        }
+        note =
+            '<div class="welcome_note"><div class="welcome_note_title">' +
+            (Main_IsOn_OSInterface ? STR_WARNING_PHONE : STR_WARNING_BROWSER) +
+            '</div>' +
+            (Main_IsOn_OSInterface ? STR_WARNING_PHONE_SUMMARY : STR_WARNING_BROWSER_SUMMARY) +
+            '</div>';
+    }
+
+    var tipIcons = ['back', 'history', 'play', 'settings'],
+        tips = '',
+        i = 0,
+        len = STR_WELCOME_TIPS ? STR_WELCOME_TIPS.length : 0;
+
+    for (i; i < len; i++) {
+        tips +=
+            '<div class="welcome_tip"><span class="welcome_tip_icon">' +
+            Sidepannel_Icon(tipIcons[i] || 'play') +
+            '</span><span>' +
+            STR_WELCOME_TIPS[i] +
+            '</span></div>';
     }
 
     Main_innerHTML(
         'welcome_dialog_text',
-        STR_DIV_TITLE +
+        '<div class="welcome_logo">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<rect x="3" y="5" width="18" height="12" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>' +
+            '</div><div class="welcome_kicker">' +
             STR_WELCOME +
-            STR_SPACE_HTML +
+            '</div><div class="welcome_title">' +
             STR_TWITCH_TV +
-            '</div>' +
-            STR_BR +
-            STR_ABOUT_INFO_1 +
-            STR_BR +
-            STR_BR +
-            STR_ABOUT_INFO_2 +
-            STR_BR +
-            STR_BR +
+            '</div><div class="welcome_text">' +
             STR_WELCOME_SUMMARY +
-            STR_BR +
-            STR_BR +
-            STR_CONTACT +
-            phone_warning +
-            STR_DIV_TITLE +
+            '</div><div class="welcome_tips">' +
+            tips +
+            '</div>' +
+            note +
+            '<div class="welcome_footer">' +
+            STR_ABOUT_INFO_2 +
+            '</div><div class="welcome_close">' +
             STR_CLOSE_THIS +
             '</div>'
     );

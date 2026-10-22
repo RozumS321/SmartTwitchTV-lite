@@ -121,6 +121,8 @@ function ru_RULang() {
     STR_HOME = 'Главная';
     STR_HOME_LIVE = 'Подписки в эфире';
     STR_FOLLOWED_GAMES = 'Мои категории';
+    //Welcome dialog remote tips (Main_showWelcomeDialog)
+    STR_WELCOME_TIPS = ['Влево или «Назад» — меню', 'Зажать ОК — обновить экран, зажать влево — действия с карточкой', 'В плеере: вверх — лента эфиров, вниз — чат', 'Остальное — в «Настройках»'];
     //Settings sections (Settings_Groups): title, hint
     STR_SETTINGS_GROUPS = [
         ['Основные', 'Язык, контент, запуск'],
@@ -458,8 +460,8 @@ function ru_RULang() {
     STR_CHAT_DELAY_LATENCY_TO_BROADCASTER = 'Исходя из ' + STR_LATENCY_TO_BROADCASTER;
     STR_PING = 'Пинг до Twitch (мс):';
     STR_WARNINGS = 'Предупреждения';
-    STR_WELCOME = 'Добро пожаловать в';
-    STR_WELCOME_SUMMARY = 'В приложении много настроек. Загляните в «Настройки» и «Управление», чтобы освоиться';
+    STR_WELCOME = 'Добро пожаловать';
+    STR_WELCOME_SUMMARY = 'Клиент Twitch для телевизора с новым дизайном. Главное про управление:';
     STR_WARNING_PHONE = 'Для телефонов';
     STR_WARNING_PHONE_SUMMARY = 'Приложение сделано для телевизора, на телефоне работает не всё. Без клавиатуры или пульта пользуйтесь экранными кнопками: коснитесь экрана, чтобы их показать. Положение и прозрачность настраиваются в настройках';
     STR_DPAD_POSTION = 'Положение D-Pad';

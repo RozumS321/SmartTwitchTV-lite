@@ -4923,6 +4923,143 @@
                 }
             }
 
+            /* Welcome dialog (Main_showWelcomeDialog): a centered card, logo and title, remote tips with icons */
+            #welcome_dialog .about_dialogs {
+                left: 50%;
+                width: 76vh !important;
+                margin-left: 0 !important;
+                padding: 4.4vh 4.4vh 3.2vh;
+                border-radius: 2.8vh;
+                transform: translate(-50%, -50%);
+                animation: tv_dialog_in 260ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+            }
+
+            #welcome_dialog_text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                margin: 0;
+                font-size: 2vh !important;
+                line-height: 1.5;
+                text-align: center;
+                color: var(--tv-text-2);
+            }
+
+            .welcome_logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 8vh;
+                height: 8vh;
+                margin-bottom: 2.2vh;
+                border-radius: 2.2vh;
+                background-color: var(--tv-accent);
+            }
+
+            .welcome_logo svg {
+                width: 4.4vh;
+                height: 4.4vh;
+            }
+
+            .welcome_kicker {
+                font-weight: 700;
+                font-size: 1.7vh;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--tv-accent-ink);
+            }
+
+            .welcome_title {
+                margin: 0.6vh 0 1.4vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 4vh;
+                line-height: 1.1;
+                letter-spacing: -0.02em;
+                color: var(--tv-text);
+            }
+
+            .welcome_text {
+                max-width: 58vh;
+                font-weight: 500;
+                font-size: 2.1vh;
+            }
+
+            .welcome_tips {
+                display: flex;
+                flex-direction: column;
+                gap: 1vh;
+                width: 100%;
+                margin-top: 2.6vh;
+            }
+
+            .welcome_tip {
+                display: flex;
+                align-items: center;
+                gap: 1.8vh;
+                padding: 1.4vh 2vh;
+                border-radius: 1.6vh;
+                background-color: var(--tv-surface);
+                font-weight: 600;
+                font-size: 1.95vh;
+                text-align: left;
+                color: var(--tv-text);
+            }
+
+            .welcome_tip_icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                width: 4.6vh;
+                height: 4.6vh;
+                border-radius: 1.2vh;
+                background-color: var(--tv-accent-tint);
+                color: var(--tv-accent-ink);
+            }
+
+            .welcome_tip_icon svg {
+                width: 2.6vh;
+                height: 2.6vh;
+            }
+
+            .welcome_note {
+                width: 100%;
+                margin-top: 1.6vh;
+                padding: 1.4vh 2vh;
+                box-sizing: border-box;
+                border: 1px dashed var(--tv-line);
+                border-radius: 1.6vh;
+                font-weight: 500;
+                font-size: 1.7vh;
+                text-align: left;
+                color: var(--tv-muted);
+            }
+
+            .welcome_note_title {
+                margin-bottom: 0.4vh;
+                font-weight: 700;
+                color: var(--tv-text-2);
+            }
+
+            .welcome_footer {
+                margin-top: 2.4vh;
+                font-weight: 500;
+                font-size: 1.55vh;
+                color: var(--tv-muted);
+            }
+
+            .welcome_close {
+                margin-top: 1.4vh;
+                padding: 0.9vh 2vh;
+                border-radius: 999px;
+                background-color: var(--tv-surface);
+                font-weight: 700;
+                font-size: 1.6vh;
+                color: var(--tv-text-2);
+            }
+
             /* Password screen help text above the field */
             #password_help {
                 margin-bottom: 2.4vh;
