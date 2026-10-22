@@ -36,7 +36,7 @@ function AddUser_init() {
 
 function AddUser_exit() {
     if (AddUser_UsernameArray.length > 0) Main_values.Main_Go = Main_values.Main_Before;
-    else Main_values.Main_Go = Main_values.Main_Before !== Main_Users ? Main_values.Main_Before : Main_Live;
+    else Main_values.Main_Go = Main_values.Main_Before !== Main_Users ? Main_values.Main_Before : Main_Featured;
 
     AddUser_RemoveinputFocus(false);
     Main_removeEventListener('keydown', AddUser_handleKeyDown);
@@ -94,24 +94,49 @@ function AddUser_getCodeSuccess(resultObj) {
 
     if (resultObj.status === 200) {
         var data = JSON.parse(resultObj.responseText);
-        var codeDiv = STR_BR + STR_BR + data.user_code + STR_BR + STR_BR;
-
-        var urlDiv;
-        if (Main_IsOn_OSInterface) {
-            urlDiv = '<div style="color: ' + LINK_COLOR + '; text-decoration:none;">' + data.verification_uri + '</div>';
-        } else {
-            urlDiv = STR_DIV_LINK + DefaultMakeLink(data.verification_uri) + '</div>';
-        }
 
         AddUser_DeviceCode = data.device_code;
 
-        Main_innerHTML('add_user_text', STR_ADD_USER_TEXT.replace('%site', urlDiv).replace('%code', codeDiv));
+        Main_innerHTML('add_user_text', AddUser_ActivateCard(data.verification_uri, data.user_code));
         Main_ShowElement('add_user_text_holder');
         Main_HideLoadDialog();
         AddUser_getCodeCheck(AddUser_DeviceCodeTimeout);
     } else {
         AddUser_getCodeError();
     }
+}
+
+//Sign in card: the translated STR_ADD_USER_TEXT ("go to %site ... enter the code: %code") is split around its
+//placeholders, the site becomes a pill (a link in the browser) and the code one box per character
+function AddUser_ActivateCard(uri, code) {
+    var site = STR_ADD_USER_TEXT.split('%site'),
+        rest = (site[1] || '').split('%code'),
+        shortUri = uri.replace(/^https?:\/\/(www\.)?/, '').split('?')[0],
+        url = Main_IsOn_OSInterface ? shortUri : '<a href="' + uri + '" target="_blank">' + shortUri + '</a>',
+        codeHtml = '',
+        i = 0,
+        len = code.length;
+
+    for (i; i < len; i++) {
+        codeHtml += code.charAt(i) === '-' ? '<span class="activate_code_dash"></span>' : '<span>' + code.charAt(i) + '</span>';
+    }
+
+    return (
+        '<div class="activate_icon">' +
+        Sidepannel_Icon('user') +
+        '</div><div class="activate_title">' +
+        STR_USER_ADD +
+        '</div><div class="activate_text">' +
+        site[0] +
+        '</div><div class="activate_url">' +
+        url +
+        '</div><div class="activate_text">' +
+        rest[0] +
+        '</div><div class="activate_code">' +
+        codeHtml +
+        '</div>' +
+        (rest[1] ? '<div class="activate_text">' + rest[1] + '</div>' : '')
+    );
 }
 
 // function AddUser_insertString(str, index, value) {
@@ -308,11 +333,8 @@ function AddUser_UpdateSidePanelSize(logo, username) {
     );
     Sidepannel_SetUserLabel(username);
 
-    var size = username.length;
-
-    size = size > 9 ? size - 9 : 0;
-
-    Sidepannel_MovelDiv.style.width = 'calc(' + MoveldefaultWidth + '% + ' + size + 'ch)';
+    //Fixed width per language, a long username is cut with an ellipsis in the account card
+    Sidepannel_MovelDiv.style.width = MoveldefaultWidth + '%';
 
     var pos = Sidepannel_MovelDiv.offsetWidth - Sidepannel_FixDiv.offsetWidth;
 
@@ -321,7 +343,7 @@ function AddUser_UpdateSidePanelSize(logo, username) {
             Sidepannel_MovelDiv.style.transform = 'translateX(-' + (pos / BodyfontSize + Sidepannel_OffsetMovelTransform) + 'em)';
     } else {
         var newsize = document.body.offsetWidth;
-        newsize = (newsize / 100) * (MoveldefaultWidth + size) - (newsize / 100) * 5;
+        newsize = (newsize / 100) * MoveldefaultWidth - (newsize / 100) * 5;
         Sidepannel_MovelDiv.style.transform = 'translateX(-' + (newsize / BodyfontSize - 0.05) + 'em)';
     }
 
@@ -404,7 +426,13 @@ function AddUser_SaveNewUser(responseText) {
         Users_Userlastadded = AddUser_Username.id;
         Users_ShowAuthentication = false;
         AddUser_exit();
-        Main_values.Main_Go = Main_Users;
+        //First account: straight to Home with the followed live channels, more accounts: the accounts list
+        if (AddUser_UsernameArray.length === 1) {
+            Main_values.Main_Home = true;
+            Main_values.Main_Go = Main_UserLive;
+        } else {
+            Main_values.Main_Go = Main_Users;
+        }
         Main_HideLoadDialog();
         if (AddUser_UsernameArray.length === 1) {
             AddUser_SaveNewUserRefreshTokens(0);

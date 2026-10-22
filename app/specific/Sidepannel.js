@@ -52,17 +52,96 @@ var Sidepannel_Positions = {};
 var Sidepannel_AnimationTimeout = 200; //Same value as side_panel_holder_ani
 
 function Sidepannel_AddFocusMain() {
-    Main_AddClass(
-        'side_panel_movel_new_' + Sidepannel_Sidepannel_Pos,
-        Sidepannel_Sidepannel_Pos < 8 ? 'side_panel_new_icons_text' : 'side_panel_new_icons_text_botton'
-    );
+    Main_AddClass('side_panel_movel_new_' + Sidepannel_Sidepannel_Pos, 'side_panel_row_focus');
 }
 
 function Sidepannel_RemoveFocusMain() {
-    Main_RemoveClass(
-        'side_panel_movel_new_' + Sidepannel_Sidepannel_Pos,
-        Sidepannel_Sidepannel_Pos < 8 ? 'side_panel_new_icons_text' : 'side_panel_new_icons_text_botton'
+    Main_RemoveClass('side_panel_movel_new_' + Sidepannel_Sidepannel_Pos, 'side_panel_row_focus');
+}
+
+//Side menu icons, 24px grid with a 2px stroke, drawn in currentColor
+var Sidepannel_IconPaths = {
+    search: '<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>',
+    home: '<path d="M3 10.5L12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path>',
+    live:
+        '<circle cx="12" cy="12" r="2"></circle>' +
+        '<path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"></path>',
+    featured: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"></path>',
+    games:
+        '<rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect>' +
+        '<rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>',
+    videos: '<rect x="2" y="5" width="14" height="14" rx="2.5"></rect><path d="M16 10l6-3.5v11L16 14"></path>',
+    clips: '<circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"></path>',
+    follows: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path>',
+    channels: '<circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0M16 3.1a4 4 0 0 1 0 7.8M22 21a7 7 0 0 0-5-6.7"></path>',
+    user: '<circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path>',
+    history: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
+    blocked: '<circle cx="12" cy="12" r="9"></circle><path d="M5.6 5.6l12.8 12.8"></path>',
+    back: '<path d="M19 12H5M12 19l-7-7 7-7"></path>',
+    play: '<path d="M7 4.5v15l12-7.5z"></path>',
+    settings: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4"></path>',
+    exit: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path>'
+};
+
+function Sidepannel_Icon(name) {
+    return (
+        '<svg class="side_panel_svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        Sidepannel_IconPaths[name] +
+        '</svg>'
     );
+}
+
+//Fills one menu entry: the row of the open menu and its tile on the collapsed rail
+function Sidepannel_SetRow(pos, label, icon) {
+    var svg = Sidepannel_Icon(icon);
+
+    Main_innerHTML('side_panel_new_' + pos, svg);
+    Main_innerHTML('side_panel_movel_new_' + pos, '<span class="side_panel_row_icon">' + svg + '</span><span class="side_panel_row_label">' + label + '</span>');
+}
+
+//Top to bottom order the remote walks, rows that are hidden in the current mode are skipped
+//15 home (only with a user), 10 settings, 13 exit, 0 account card
+//see Sidepannel_KeyEnter for what each row opens, rows hidden for the current user are skipped
+var Sidepannel_MainOrder = [1, 15, 3, 4, 5, 6, 7, 8, 9, 10, 13, 0];
+var Sidepannel_HomePos = 15;
+var Sidepannel_UserOrder = [2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 0];
+
+function Sidepannel_MainMove(step) {
+    //Follow what is drawn, not Main_values.Sidepannel_IsUser, some screens change that flag on their own
+    var order = Main_A_includes_B(Sidepannel_MovelDiv.className, 'side_panel_user') ? Sidepannel_UserOrder : Sidepannel_MainOrder,
+        next = order.indexOf(Sidepannel_Sidepannel_Pos) + step;
+
+    while (next >= 0 && next < order.length && Main_A_includes_B(Main_getElementById('side_panel_movel_new_' + order[next]).className, 'hide')) {
+        next += step;
+    }
+
+    if (next < 0 || next >= order.length) return;
+
+    Sidepannel_RemoveFocusMain();
+    Sidepannel_Sidepannel_Pos = order[next];
+    Sidepannel_AddFocusMain();
+}
+
+//The follows menu puts its back row and section label on top, both columns follow the same class
+function Sidepannel_SetUserMode(isUser) {
+    if (isUser) {
+        Main_AddClassWithEle(Sidepannel_MovelDiv, 'side_panel_user');
+        Main_AddClassWithEle(Sidepannel_FixDiv, 'side_panel_user');
+    } else {
+        Main_RemoveClassWithEle(Sidepannel_MovelDiv, 'side_panel_user');
+        Main_RemoveClassWithEle(Sidepannel_FixDiv, 'side_panel_user');
+    }
+}
+
+function Sidepannel_ShowRow(pos, show) {
+    if (show) {
+        Main_ShowElement('side_panel_movel_new_' + pos);
+        Main_ShowElement('side_panel_new_' + pos);
+    } else {
+        Main_HideElement('side_panel_movel_new_' + pos);
+        Main_HideElement('side_panel_new_' + pos);
+    }
 }
 
 function Sidepannel_AddFocusLiveFeed(skipAnimation) {
@@ -346,8 +425,7 @@ function Sidepannel_CheckIfIsLiveWarn(ErroText, time) {
 
 var Sidepannel_showWarningDialogId;
 function Sidepannel_showWarningDialog(text, timeout) {
-    Main_innerHTML('sidepannel_dialog_warning_text', text);
-    Main_ShowElement('sidepannel_dialog_warning');
+    Main_ToastShow(Main_getElementById('sidepannel_dialog_warning'), Main_getElementById('sidepannel_dialog_warning_text'), text);
 
     if (timeout) {
         Sidepannel_showWarningDialogId = Main_setTimeout(Sidepannel_HideWarningDialog, timeout, Sidepannel_showWarningDialogId);
@@ -356,7 +434,7 @@ function Sidepannel_showWarningDialog(text, timeout) {
 
 function Sidepannel_HideWarningDialog() {
     Main_clearTimeout(Main_setHistoryItemId);
-    Main_HideElement('sidepannel_dialog_warning');
+    Main_ToastHide(Main_getElementById('sidepannel_dialog_warning'));
 }
 
 function Sidepannel_partnerIcon(name, partner, isrerun) {
@@ -402,21 +480,9 @@ function Sidepannel_GetSize() {
     return Sidepannel_ScroolDoc.getElementsByClassName('side_panel_feed').length;
 }
 
+//The follows pages of the menu, called by Sidepannel_KeyEnter for rows 5 to 9 (the panel is already hidden)
 function Sidepannel_KeyEnterUser() {
-    if (Sidepannel_Sidepannel_Pos >= 3 && Sidepannel_Sidepannel_Pos <= 6 && !AddUser_UsernameArray[0].access_token) {
-        Sidepannel_ShowNoUserWarning();
-        return;
-    }
-
-    if (Sidepannel_Sidepannel_Pos !== 2 && Sidepannel_Sidepannel_Pos !== 13) Sidepannel_Hide();
-
-    if (Sidepannel_Sidepannel_Pos === 2) {
-        Main_values.Sidepannel_IsUser = false;
-        Sidepannel_SetDefaultLabels();
-        Sidepannel_UnSetTopOpacity();
-    } else if (Sidepannel_Sidepannel_Pos === 3) Sidepannel_Go(Main_UserLive);
-    else if (Sidepannel_Sidepannel_Pos === 4) Sidepannel_Go(Main_usergames);
-    else if (Sidepannel_Sidepannel_Pos === 5) Sidepannel_Go(Main_UserVod);
+    if (Sidepannel_Sidepannel_Pos === 5) Sidepannel_Go(Main_usergames);
     else if (Sidepannel_Sidepannel_Pos === 6) Sidepannel_Go(Main_UserChannels);
     else if (Sidepannel_Sidepannel_Pos === 7) {
         Main_values.Main_selectedChannel_id = AddUser_UsernameArray[0].id;
@@ -437,8 +503,6 @@ function Sidepannel_KeyEnterUser() {
         Sidepannel_Go(Main_History[Main_values.HistoryPos]);
     } else if (Sidepannel_Sidepannel_Pos === 9) {
         Sidepannel_Go(Main_Blocked);
-    } else {
-        Sidepannel_KeyEnterBase();
     }
 }
 
@@ -463,40 +527,42 @@ function Sidepannel_KeyEnterBase() {
         }
     } else if (Sidepannel_Sidepannel_Pos === 10) {
         Main_showSettings();
-    } else if (Sidepannel_Sidepannel_Pos === 11) {
-        Main_showAboutDialog(Sidepannel_Callback, ScreenObj[Main_values.Main_Go].key_controls);
-    } else if (Sidepannel_Sidepannel_Pos === 12) {
-        Main_showControlsDialog(Sidepannel_Callback, ScreenObj[Main_values.Main_Go].key_controls);
     } else if (Sidepannel_Sidepannel_Pos === 13) {
         Main_showExitDialog();
-    } else if (Sidepannel_Sidepannel_Pos === 14) {
-        Main_UpdateDialogShowCheck();
     }
 }
 
+//One menu for everything: the follows pages (categories, channels, my channel, history, blocked) live in it
+//with a user, Live, Videos, Clips and the follows submenu are gone. Rows: 1 search, 15 home, 3 featured (no user),
+//4 games, 5 followed categories, 6 followed channels, 7 my channel, 8 history, 9 blocked, 10 settings, 13 exit, 0 account
 function Sidepannel_KeyEnter() {
-    if (Main_values.Sidepannel_IsUser) {
-        Sidepannel_KeyEnterUser();
+    var pos = Sidepannel_Sidepannel_Pos;
+
+    if (pos >= 5 && pos <= 6 && !AddUser_UserHasToken()) {
+        Main_addEventListener('keydown', Sidepannel_Callback);
+        Sidepannel_ShowNoUserWarning();
         return;
     }
 
-    if (Sidepannel_Sidepannel_Pos !== 2) {
-        Sidepannel_Hide();
+    if (pos !== 13) Sidepannel_Hide();
+
+    if (pos === Sidepannel_HomePos) Sidepannel_GoHome();
+    else if (pos === 3) Sidepannel_Go(Main_Featured);
+    else if (pos === 4) Sidepannel_Go(Main_games);
+    else if (pos >= 5 && pos <= 9) Sidepannel_KeyEnterUser();
+    else Sidepannel_KeyEnterBase();
+}
+
+//Home is the followed live screen shown from the main menu: main menu labels, "Home" title
+function Sidepannel_GoHome() {
+    if (!AddUser_UserHasToken()) {
+        Main_addEventListener('keydown', Sidepannel_Callback);
+        Sidepannel_ShowNoUserWarning();
+        return;
     }
 
-    if (Sidepannel_Sidepannel_Pos === 2) {
-        if (AddUser_IsUserSet()) {
-            Sidepannel_SetUserLabels();
-            Sidepannel_UnSetTopOpacity();
-        } else {
-            Sidepannel_ShowNoUserWarning();
-        }
-    } else if (Sidepannel_Sidepannel_Pos === 3) Sidepannel_Go(Main_Live);
-    else if (Sidepannel_Sidepannel_Pos === 4) Sidepannel_Go(Main_Featured);
-    else if (Sidepannel_Sidepannel_Pos === 5) Sidepannel_Go(Main_games);
-    else if (Sidepannel_Sidepannel_Pos === 6) Sidepannel_Go(Main_Vod);
-    else if (Sidepannel_Sidepannel_Pos === 7) Sidepannel_Go(Main_Clip);
-    else Sidepannel_KeyEnterBase();
+    Main_values.Main_Home = true;
+    Sidepannel_Go(Main_UserLive);
 }
 
 function Sidepannel_Go(GoTo) {
@@ -595,6 +661,7 @@ function Sidepannel_StartMain() {
     Sidepannel_IsMain = true;
     Sidepannel_MovelDiv.style.transform = 'translateX(' + Sidepannel_FixdefaultMargin + '%)';
     Sidepannel_FixDiv.style.marginLeft = '';
+    Main_AddClassWithEle(Sidepannel_FixDiv, 'side_panel_fix_open');
     Main_addEventListener('keydown', Sidepannel_handleKeyDownMain);
     Sidepannel_AddFocusMain();
     Main_EventScreen('Side_panel_main');
@@ -605,9 +672,7 @@ function Sidepannel_isShowingMenus() {
 }
 
 function Sidepannel_HideMain(hideAll) {
-    var size = AddUser_UsernameArray[0] ? AddUser_UsernameArray[0].display_name.length : STR_USER_ADD;
-    size = size > 11 ? size - 11 : 0;
-
+    Main_RemoveClassWithEle(Sidepannel_FixDiv, 'side_panel_fix_open');
     if (hideAll) Sidepannel_FixDiv.style.marginLeft = '-' + Sidepannel_FixdefaultMargin + '%';
 
     var pos = hideAll ? Sidepannel_MovelDiv.offsetWidth : Sidepannel_MovelDiv.offsetWidth - Sidepannel_FixDiv.offsetWidth;
@@ -641,28 +706,32 @@ function Sidepannel_HideEle(PreventCleanQualities, full) {
 }
 
 function Sidepannel_SetTopOpacity(Main_Go) {
-    if (Sidepannel_Pos_Screens[Main_Go]) {
+    if (Main_Go === Main_UserLive && Main_values.Main_Home) {
+        Sidepannel_Sidepannel_Pos = Sidepannel_HomePos;
+    } else if (Sidepannel_Pos_Screens[Main_Go]) {
         Sidepannel_Sidepannel_Pos = Sidepannel_Pos_Screens[Main_Go];
     }
 
     Sidepannel_UnSetTopOpacity();
 
-    if (Sidepannel_Sidepannel_Pos && Sidepannel_Sidepannel_Pos < 10) {
+    if (Sidepannel_Sidepannel_Pos && (Sidepannel_Sidepannel_Pos < 10 || Sidepannel_Sidepannel_Pos === Sidepannel_HomePos)) {
         Main_AddClass('side_panel_new_' + Sidepannel_Sidepannel_Pos, 'side_panel_new_icons_start');
+        Main_AddClass('side_panel_movel_new_' + Sidepannel_Sidepannel_Pos, 'side_panel_row_current');
     }
 }
 
+//menu row of each screen, 0 for the screens without one (Live, Videos, Clips, followed videos were removed)
 var Sidepannel_Pos_Screens = [
     1, //Main_Search 0
-    3, //Main_Live 1
+    0, //Main_Live 1
     0, //Main_Users 2
-    4, //Main_Featured 3
-    5, //Main_games 4
-    6, //Main_Vod 5
-    7, //Main_Clip 6
-    3, //Main_UserLive 7
-    4, //Main_usergames 8
-    5, //Main_UserVod 9
+    3, //Main_Featured 3
+    4, //Main_games 4
+    0, //Main_Vod 5
+    0, //Main_Clip 6
+    15, //Main_UserLive 7
+    5, //Main_usergames 8
+    0, //Main_UserVod 9
     6, //Main_UserChannels 10
     1, // Main_SearchGames 11
     1, // Main_SearchLive 12
@@ -677,101 +746,90 @@ var Sidepannel_Pos_Screens = [
     8, //Main_AGameClip 21
     8, //Main_AGameClip 22
     8, //Main_AGameClip 23
-    3, //Main_AGameClip 24
+    0, //Main_Password 24
     9, //Main_AGameClip 25
     1 // Main_SearchVod 26
 ];
 
 function Sidepannel_UnSetTopOpacity() {
-    for (var i = 1; i < 10; i++) Main_RemoveClass('side_panel_new_' + i, 'side_panel_new_icons_start');
+    for (var i = 1; i < 10; i++) {
+        Main_RemoveClass('side_panel_new_' + i, 'side_panel_new_icons_start');
+        Main_RemoveClass('side_panel_movel_new_' + i, 'side_panel_row_current');
+    }
+
+    Main_RemoveClass('side_panel_new_' + Sidepannel_HomePos, 'side_panel_new_icons_start');
+    Main_RemoveClass('side_panel_movel_new_' + Sidepannel_HomePos, 'side_panel_row_current');
 }
 
+//There is no follows submenu any more, the screens that used to open it get the one menu
 function Sidepannel_SetUserLabels() {
-    Main_values.Sidepannel_IsUser = true;
-
-    Main_innerHTML('side_panel_movel_user_text', STR_SPACE_HTML + STR_USER_MENU + STR_SPACE_HTML);
-    Main_ShowElement('side_panel_movel_user_text_holder');
-    Main_ShowElement('side_panel_movel_new_8');
-    Main_ShowElement('side_panel_new_8');
-    Main_ShowElement('side_panel_movel_new_9');
-    Main_ShowElement('side_panel_new_9');
-
-    Main_ShowElement('side_panel_movel_new_6');
-    Main_ShowElement('side_panel_new_6');
-    Main_ShowElement('side_panel_movel_new_7');
-    Main_ShowElement('side_panel_new_7');
-
-    Main_innerHTML('side_panel_movel_new_2', STR_MAIN_MENU);
-    Main_innerHTML('side_panel_movel_new_4', STR_GAMES);
-    Main_innerHTML('side_panel_movel_new_5', STR_VIDEOS);
-    Main_innerHTML('side_panel_movel_new_6', STR_CHANNELS);
-    Main_innerHTML('side_panel_movel_new_7', STR_USER_MY_CHANNEL);
-    Main_innerHTML('side_panel_movel_new_8', STR_HISTORY);
-    Main_innerHTML('side_panel_movel_new_9', STR_BLOCKED);
-
-    Sidepannel_SetIcons('side_panel_new_2', 'arrow-left', 'font-size: 115%; position: relative; top: 2%;');
-    Sidepannel_SetIcons('side_panel_new_4', 'gamepad', 'font-size: 115%;');
-    Sidepannel_SetIcons('side_panel_new_5', 'movie-play');
-    Sidepannel_SetIcons('side_panel_new_6', 'filmstrip');
-    Sidepannel_SetIcons('side_panel_new_7', 'user', 'font-size: 115%; position: relative; top: 2%;');
+    Sidepannel_SetDefaultLabels();
 }
 
 function Sidepannel_SetDefaultLabels() {
+    Main_values.Sidepannel_IsUser = false;
+
+    //also shows or hides the rows that need a user, Sidepannel_ShowUserRows
     if (AddUser_UsernameArray[0]) Sidepannel_SetUserLabel(AddUser_UsernameArray[0].display_name);
     else Sidepannel_SetUserLabel(STR_USER_ADD);
 
-    Main_HideElement('side_panel_movel_new_8');
-    Main_HideElement('side_panel_new_8');
-    Main_HideElement('side_panel_movel_new_9');
-    Main_HideElement('side_panel_new_9');
-    Main_ShowElement('side_panel_movel_new_5');
-    Main_ShowElement('side_panel_new_5');
+    Sidepannel_SetUserMode(false);
 
-    Main_HideElement('side_panel_movel_user_text_holder');
+    Sidepannel_ShowRow(1, true);
+    Sidepannel_ShowRow(2, false);
+    Sidepannel_ShowRow(4, true);
 
-    Main_innerHTML('side_panel_movel_new_1', STR_SEARCH);
+    Sidepannel_SetRow(1, STR_SEARCH, 'search');
+    Sidepannel_SetRow(Sidepannel_HomePos, STR_HOME, 'home');
+    Sidepannel_SetRow(3, STR_FEATURED, 'featured');
+    Sidepannel_SetRow(4, STR_GAMES, 'games');
+    Sidepannel_SetRow(5, STR_FOLLOWED_GAMES, 'follows');
+    Sidepannel_SetRow(6, STR_CHANNELS, 'channels');
+    Sidepannel_SetRow(7, STR_USER_MY_CHANNEL, 'user');
+    Sidepannel_SetRow(8, STR_HISTORY, 'history');
+    Sidepannel_SetRow(9, STR_BLOCKED, 'blocked');
 
-    Main_innerHTML('side_panel_movel_new_2', STR_USER_MENU);
-    Main_innerHTML('side_panel_movel_new_3', STR_LIVE);
-    Main_innerHTML('side_panel_movel_new_4', STR_FEATURED);
-    Main_innerHTML('side_panel_movel_new_5', STR_GAMES);
-    Main_innerHTML('side_panel_movel_new_6', STR_VIDEOS);
-    Main_innerHTML('side_panel_movel_new_7', STR_CLIPS);
-
-    Main_innerHTML('side_panel_movel_new_10', STR_SPACE_HTML + STR_SETTINGS);
-    Main_innerHTML('side_panel_movel_new_11', STR_SPACE_HTML + STR_ABOUT);
-    Main_innerHTML('side_panel_movel_new_12', STR_SPACE_HTML + STR_CONTROLS);
-    Main_innerHTML('side_panel_movel_new_13', STR_SPACE_HTML + STR_EXIT);
-    Main_innerHTML('side_panel_movel_new_14', STR_SPACE_HTML + STR_UPDATE_CHANGELOG);
-
-    Sidepannel_SetIcons('side_panel_new_1', 'search');
-    Sidepannel_SetIcons('side_panel_new_2', 'user', 'font-size: 115%; position: relative; top: 2%;');
-    Sidepannel_SetIcons('side_panel_new_4', 'star', 'font-size: 115%; position: relative; top: 2%;');
-    Sidepannel_SetIcons('side_panel_new_5', 'gamepad', 'font-size: 115%;');
-    Sidepannel_SetIcons('side_panel_new_6', 'movie-play');
-    Sidepannel_SetIcons('side_panel_new_7', 'movie');
+    Sidepannel_SetRow(10, STR_SETTINGS, 'settings');
+    Sidepannel_SetRow(13, STR_EXIT, 'exit');
 }
 
+//Without a user the menu has no follows part, its divider goes too (.side_panel_no_user in index.html)
+function Sidepannel_SetHasUser(user) {
+    if (!Sidepannel_MovelDiv) return;
+
+    if (user) {
+        Main_RemoveClassWithEle(Sidepannel_MovelDiv, 'side_panel_no_user');
+        Main_RemoveClassWithEle(Sidepannel_FixDiv, 'side_panel_no_user');
+    } else {
+        Main_AddClassWithEle(Sidepannel_MovelDiv, 'side_panel_no_user');
+        Main_AddClassWithEle(Sidepannel_FixDiv, 'side_panel_no_user');
+    }
+}
+
+//Account card, the avatar img is put in icon_side_panel_imgholder_0 by AddUser_UpdateSidePanelSize
 function Sidepannel_SetUserLabel(text) {
     Main_innerHTML(
         'side_panel_movel_new_0',
-        text + STR_BR + '<div style="font-size: 45%;display: inline-block; transform: translateY(-80%);">' + STR_USER_EXTRAS + '</div>'
+        '<span class="side_panel_row_avatar">' +
+            Main_getElementById('icon_side_panel_imgholder_0').innerHTML.replace(/ id="[^"]*"/g, '') +
+            '</span><span class="side_panel_row_label"><span class="side_panel_row_name">' +
+            text +
+            '</span><span class="side_panel_row_sub">' +
+            STR_USER_EXTRAS +
+            '</span></span>'
     );
+
+    //Called on every user change, so Home and the follows pages appear and go with the account, Featured the other way around
+    Sidepannel_ShowUserRows(AddUser_UserIsSet());
 }
 
-function Sidepannel_SetIcons(div, icon, extra_style) {
-    if (icon)
-        Main_innerHTML(
-            div,
-            '<i id="icon_' +
-                div +
-                '" class="icon icon-' +
-                icon +
-                ' side_panel_new_icons_pad" ' +
-                (extra_style ? ' style="' + extra_style + '"' : '') +
-                '></i>'
-        );
-    else Main_textContent(div, '');
+function Sidepannel_ShowUserRows(user) {
+    Sidepannel_ShowRow(Sidepannel_HomePos, user);
+    Sidepannel_ShowRow(3, !user);
+
+    for (var i = 5; i < 10; i++) Sidepannel_ShowRow(i, user);
+
+    Sidepannel_SetHasUser(user);
 }
 
 var Sidepannel_Scroll_Offset = 0;
@@ -913,13 +971,6 @@ function Sidepannel_ShowNoUserWarning() {
     Main_showWarningDialog(STR_NOKUSER_WARNING, 5000);
 }
 
-function Sidepannel_handleMainKey(Down) {
-    if (!Main_values.Sidepannel_IsUser && Sidepannel_Sidepannel_Pos === 9) {
-        //click down to settings on none user menu
-        Sidepannel_Sidepannel_Pos += Down ? 1 : -1;
-    }
-}
-
 //menu controls
 function Sidepannel_handleKeyDownMain(event) {
     switch (event.keyCode) {
@@ -935,28 +986,11 @@ function Sidepannel_handleKeyDownMain(event) {
             break;
         case KEY_PG_UP:
         case KEY_UP:
-            if (Sidepannel_Sidepannel_Pos) {
-                Sidepannel_RemoveFocusMain();
-                Sidepannel_Sidepannel_Pos--;
-                if (!Main_values.Sidepannel_IsUser && Sidepannel_Sidepannel_Pos === 9) {
-                    Sidepannel_Sidepannel_Pos -= 2;
-                }
-
-                Sidepannel_handleMainKey(false);
-                Sidepannel_AddFocusMain();
-            }
+            Sidepannel_MainMove(-1);
             break;
         case KEY_PG_DOWN:
         case KEY_DOWN:
-            if (Sidepannel_Sidepannel_Pos < 14) {
-                Sidepannel_RemoveFocusMain();
-                Sidepannel_Sidepannel_Pos++;
-                if (!Main_values.Sidepannel_IsUser && Sidepannel_Sidepannel_Pos === 8) {
-                    Sidepannel_Sidepannel_Pos++;
-                }
-                Sidepannel_handleMainKey(true);
-                Sidepannel_AddFocusMain();
-            }
+            Sidepannel_MainMove(1);
             break;
         case KEY_1:
         case KEY_PLAY:

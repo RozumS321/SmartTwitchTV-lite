@@ -1221,7 +1221,7 @@ function UserLiveFeedobj_CreatGameFeed(pos, x, id, data) {
         '" class="stream_info_game_name">' +
         data[0] +
         '</div>' +
-        (data[1] !== '' ? '<div class="stream_info_live" style="width: 100%; display: inline-block;">' + data[1] + '</div>' : '') +
+        (data[1] !== '' ? '<div class="game_meta">' + data[1] + '</div>' : '') +
         '</div></div></div>';
 
     return div;
@@ -1906,14 +1906,7 @@ function UserLiveFeedobj_loadDataGamesSuccessEnd(response, total, pos, itemsCoun
 
                 UserLiveFeed_cell[pos][itemsCount] = UserLiveFeedobj_CreatGameFeed(pos, itemsCount, pos + '_' + itemsCount, [
                     game.displayName, //0
-                    (cell.channelsCount ? Main_formatNumber(cell.channelsCount) : 0) +
-                        STR_SPACE_HTML +
-                        STR_CHANNELS +
-                        STR_BR +
-                        STR_FOR +
-                        (cell.viewersCount ? Main_formatNumber(cell.viewersCount) : 0) +
-                        STR_SPACE_HTML +
-                        Main_GetViewerStrings(cell.viewersCount ? cell.viewersCount : 0), //1
+                    ScreensObj_GameMeta(cell.channelsCount || 0, cell.viewersCount || 0), //1
                     id_cell, //2
                     game.boxArtURL //3
                 ]);

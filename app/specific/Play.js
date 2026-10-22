@@ -433,10 +433,7 @@ function Play_Resume() {
     UserLiveFeed_Hide();
 
     ChatLive_Playing = true;
-    Main_innerHTMLWithEle(
-        Play_BottonIcons_Pause,
-        '<div id="pause_button_icon_holder"><i id="pause_button_icon" class="pause_button3d icon-pause"></i></div>'
-    );
+    Main_innerHTMLWithEle(Play_BottonIcons_Pause, Play_GetPlayPauseIcon(true));
     Play_showBufferDialog();
     Play_ResumeAfterOnlineCounter = 0;
 
@@ -1444,8 +1441,7 @@ function Play_HideBufferDialog() {
 
 var Play_showWarningDialogId;
 function Play_showWarningDialog(text, timeout) {
-    Main_innerHTMLWithEle(Play_dialog_warning_play_text, text);
-    Main_ShowElementWithEle(Play_dialog_warning_play);
+    Main_ToastShow(Play_dialog_warning_play, Play_dialog_warning_play_text, text);
 
     if (timeout) {
         Play_showWarningDialogId = Main_setTimeout(
@@ -1460,30 +1456,17 @@ function Play_showWarningDialog(text, timeout) {
 }
 
 function Play_HideWarningDialog() {
-    Main_HideElementWithEle(Play_dialog_warning_play);
+    Main_ToastHide(Play_dialog_warning_play);
 }
 
 function Play_WarningDialogVisible() {
-    return Main_isElementShowingWithEle(Play_dialog_warning_play);
+    return Main_ToastIsShowing(Play_dialog_warning_play);
 }
 
 var Play_showWarningMiddleDialogId;
-function Play_showWarningMiddleDialog(text, timeout, IsLiveWarning) {
-    Main_innerHTMLWithEle(Play_dialog_warning_play_middle_text, text);
-    Play_dialog_warning_play_middle.style.width = '';
-
-    if (UserLiveFeed_isPreviewShowing()) {
-        Play_dialog_warning_play_middle.style.top = '90vh';
-    } else if (IsLiveWarning) {
-        Play_dialog_warning_play_middle.style.top = '81.5vh';
-        if (PlayClip_isOn) {
-            Play_dialog_warning_play_middle.style.width = PlayClip_HasVOD ? '44%' : '50%';
-        } else {
-            Play_dialog_warning_play_middle.style.width = '49%';
-        }
-    } else Play_dialog_warning_play_middle.style.top = '50vh';
-
-    Main_ShowElementWithEle(Play_dialog_warning_play_middle);
+//Now a toast like the others, callers may still pass IsLiveWarning from the old positioned dialog
+function Play_showWarningMiddleDialog(text, timeout) {
+    Main_ToastShow(Play_dialog_warning_play_middle, Play_dialog_warning_play_middle_text, text);
 
     if (timeout) {
         Play_showWarningMiddleDialogId = Main_setTimeout(
@@ -1499,12 +1482,29 @@ function Play_showWarningMiddleDialog(text, timeout, IsLiveWarning) {
 }
 
 function Play_HideWarningMidleDialog() {
-    Main_HideElementWithEle(Play_dialog_warning_play_middle);
+    Main_ToastHide(Play_dialog_warning_play_middle);
     Main_clearTimeout(Play_showWarningMiddleDialogId);
 }
 
 function Play_WarningMidleDialogVisible() {
-    return Main_isElementShowingWithEle(Play_dialog_warning_play_middle);
+    return Main_ToastIsShowing(Play_dialog_warning_play_middle);
+}
+
+//Short play / pause feedback in the middle of the video, it fades out by itself (.play_flash)
+var Play_ShowPlayPauseFlashId;
+function Play_ShowPlayPauseFlash(not_playing) {
+    var doc = Main_getElementById('dialog_play_flash');
+
+    Main_innerHTMLWithEle(doc, Play_Icon(null, not_playing ? 'pause' : 'play-1'));
+    Main_AddClassWithEle(doc, 'play_flash_show');
+
+    Play_ShowPlayPauseFlashId = Main_setTimeout(
+        function () {
+            Main_RemoveClassWithEle(doc, 'play_flash_show');
+        },
+        500,
+        Play_ShowPlayPauseFlashId
+    );
 }
 
 function Play_showExitDialog() {
@@ -1618,7 +1618,18 @@ function Play_qualityReset() {
     if (!Main_A_includes_B(Play_data.qualityPlaying, 'Auto')) Play_SetHtmlQuality(Play_info_quality);
 }
 
+//Badge next to the channel name in the player info: live, video (VOD) or clip, 0 1 2 like STR_PLAYER_BADGES
+function Play_SetInfoBadge(type) {
+    var doc = Main_getElementById('stream_info_badge');
+
+    if (!doc || !STR_PLAYER_BADGES) return;
+
+    doc.className = 'stream_info_badge stream_info_badge_' + type;
+    Main_textContentWithEle(doc, STR_PLAYER_BADGES[type]);
+}
+
 function Play_showPanel() {
+    Play_SetInfoBadge(0);
     Play_updateStreamInfo();
 
     if (Play_getQualitiesFail) {
@@ -1944,6 +1955,58 @@ function Play_qualityDisplay(getQualitiesCount, qualityIndex, callback, obj) {
     }
 
     callback(obj.doc_name);
+    Play_QualityList(getQualitiesCount, qualityIndex, obj);
+}
+
+//Quality picker like the design: the tooltip of the quality button lists every quality, the one Up/Down is on is the
+//accent row and the one playing has a dot; Enter applies as before (Play_controls[Play_controlsQuality].enterKey)
+function Play_QualityListSource(getQualitiesCount) {
+    if (getQualitiesCount === Play_getQualitiesCount) return {items: Play_data.qualities, playing: Play_data.qualityPlaying};
+    if (getQualitiesCount === PlayVod_getQualitiesCount) return {items: PlayVod_qualities, playing: PlayVod_qualityPlaying};
+    if (getQualitiesCount === PlayClip_getQualitiesCount) return {items: PlayClip_qualities, playing: PlayClip_qualityPlaying};
+
+    return null;
+}
+
+function Play_QualityList(getQualitiesCount, qualityIndex, obj) {
+    var source = Play_QualityListSource(getQualitiesCount);
+
+    if (!source || !source.items || !obj.button_text) return;
+
+    var doc = obj.doc_list;
+
+    if (!doc) {
+        doc = document.createElement('div');
+        doc.className = 'controls_list';
+        obj.button_text.appendChild(doc);
+        obj.doc_list = doc;
+        Main_AddClassWithEle(obj.button_text, 'controls_has_list');
+        //small accent label above the title, like the design
+        obj.button_text.setAttribute('data-kicker', STR_SETTINGS_GROUPS ? STR_SETTINGS_GROUPS[1][0] : STR_SETTINGS_PLAYER);
+    }
+
+    var html = '',
+        i = 0,
+        len = source.items.length,
+        parts,
+        id;
+
+    for (i; i < len; i++) {
+        id = source.items[i] && source.items[i].id ? String(source.items[i].id) : '';
+        parts = id.split(' | ');
+
+        html +=
+            '<div class="controls_list_item' +
+            (i === qualityIndex ? ' controls_list_focus' : '') +
+            (id && id === source.playing ? ' controls_list_playing' : '') +
+            '"><span class="controls_list_label">' +
+            parts[0].replace('Auto', STR_AUTO).replace('source', STR_SOURCE) +
+            '</span><span class="controls_list_hint">' +
+            parts.slice(1).join(' · ').replace('source', STR_SOURCE) +
+            '</span></div>';
+    }
+
+    doc.innerHTML = html;
 }
 
 function Play_qualityIndexReset() {

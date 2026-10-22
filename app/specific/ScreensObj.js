@@ -25,12 +25,14 @@ var Main_ItemsLimitMax = 100;
 var Main_ReloadLimitOffsetGames = 1.35;
 var Main_ReloadLimitOffsetVideos = 1.5;
 
-var Main_ItemsLimitVideo = 30;
-var Main_ColumnsCountVideo = 3;
+var Main_ItemsLimitVideo = 32;
+//4 columns, keep in sync with .stream_thumbnail_live_holder_grid in index.html
+var Main_ColumnsCountVideo = 4;
 var Main_ItemsReloadLimitVideo = Math.floor(Main_ItemsLimitVideo / Main_ColumnsCountVideo / Main_ReloadLimitOffsetVideos);
 
 var Main_ItemsLimitGame = 30;
-var Main_ColumnsCountGame = 5;
+//Keep in sync with the width of .stream_thumbnail_game_holder in index.html
+var Main_ColumnsCountGame = 6;
 var Main_ItemsReloadLimitGame = Math.floor(Main_ItemsLimitGame / Main_ColumnsCountGame / Main_ReloadLimitOffsetGames);
 
 var Main_ItemsLimitChannel = 36;
@@ -105,6 +107,21 @@ var Base_Clip_obj;
 var Base_Game_obj;
 var Base_Channel_obj;
 var Base_History_obj;
+
+//Category card stats: viewers with a live dot, channels below in a quieter line
+function ScreensObj_GameMeta(channels, viewers) {
+    return (
+        '<div class="game_meta_live"><span class="game_meta_dot"></span>' +
+        Main_formatNumber(viewers) +
+        STR_SPACE_HTML +
+        Main_GetViewerStrings(viewers) +
+        '</div><div class="game_meta_channels">' +
+        Main_formatNumber(channels) +
+        STR_SPACE_HTML +
+        STR_CHANNELS +
+        '</div>'
+    );
+}
 
 function ScreensObj_StartAllVars() {
     Base_obj = {
@@ -191,7 +208,7 @@ function ScreensObj_StartAllVars() {
                     this.screen === Main_SearchVod) &&
                 !goSidepanel
             ) {
-                if (Main_values.Main_Go === Main_values.Main_BeforeSearch) Main_values.Main_Go = Main_Live;
+                if (Main_values.Main_Go === Main_values.Main_BeforeSearch) Main_values.Main_Go = Main_Featured;
                 else Main_values.Main_Go = Main_values.Main_BeforeSearch;
                 Main_values.Search_isSearching = false;
                 Screens_BasicExit(Main_values.Main_Go, this.screen);
@@ -476,7 +493,7 @@ function ScreensObj_StartAllVars() {
         ItemsLimit: Main_ItemsLimitVideo,
         ColumnsCount: Main_ColumnsCountVideo,
         ItemsReloadLimit: Main_ItemsReloadLimitVideo,
-        thumbclass: 'stream_thumbnail_live_holder',
+        thumbclass: 'stream_thumbnail_live_holder stream_thumbnail_live_holder_grid',
         rowClass: 'animate_height_transition',
         histPosXName: 'HistoryVod_histPosX',
         screenType: 1,
@@ -543,7 +560,7 @@ function ScreensObj_StartAllVars() {
         ItemsLimit: Main_ItemsLimitVideo,
         ColumnsCount: Main_ColumnsCountVideo,
         rowClass: 'animate_height_transition',
-        thumbclass: 'stream_thumbnail_live_holder',
+        thumbclass: 'stream_thumbnail_live_holder stream_thumbnail_live_holder_grid',
         histPosXName: 'HistoryLive_histPosX',
         screenType: 0,
         img_404: IMG_404_VIDEO,
@@ -669,7 +686,7 @@ function ScreensObj_StartAllVars() {
         ColumnsCount: Main_ColumnsCountVideo,
         addFocus: Screens_addFocusVideo,
         rowClass: 'animate_height_transition',
-        thumbclass: 'stream_thumbnail_live_holder',
+        thumbclass: 'stream_thumbnail_live_holder stream_thumbnail_live_holder_grid',
         histPosXName: 'HistoryClip_histPosX',
         screenType: 2,
         cursor: null,
@@ -830,14 +847,7 @@ function ScreensObj_StartAllVars() {
                             [
                                 game.boxArtURL ? game.boxArtURL.replace('{width}x{height}', Main_GameSize) : '', //0
                                 game.displayName, //1
-                                (cell.channelsCount ? Main_formatNumber(cell.channelsCount) : 0) +
-                                    STR_SPACE_HTML +
-                                    STR_CHANNELS +
-                                    STR_BR +
-                                    STR_FOR +
-                                    (cell.viewersCount ? Main_formatNumber(cell.viewersCount) : 0) +
-                                    STR_SPACE_HTML +
-                                    Main_GetViewerStrings(cell.viewersCount ? cell.viewersCount : 0), //2
+                                ScreensObj_GameMeta(cell.channelsCount || 0, cell.viewersCount || 0), //2
                                 id_cell //3
                             ],
                             this.screen
@@ -851,16 +861,7 @@ function ScreensObj_StartAllVars() {
                             [
                                 game.box && game.box.template ? game.box.template.replace('{width}x{height}', Main_GameSize) : '', //0
                                 game.name, //1
-                                hasLive
-                                    ? Main_formatNumber(cell.channels) +
-                                      STR_SPACE_HTML +
-                                      STR_CHANNELS +
-                                      STR_BR +
-                                      STR_FOR +
-                                      Main_formatNumber(cell.viewers) +
-                                      STR_SPACE_HTML +
-                                      Main_GetViewerStrings(cell.viewers)
-                                    : '', //2
+                                hasLive ? ScreensObj_GameMeta(cell.channels, cell.viewers) : '', //2
                                 game._id //3
                             ],
                             this.screen
@@ -942,7 +943,7 @@ function ScreensObj_StartAllVars() {
         ColumnsCount: Main_ColumnsCountVideo,
         addFocus: Screens_addFocusVideo,
         rowClass: 'animate_height_transition',
-        thumbclass: 'stream_thumbnail_live_holder',
+        thumbclass: 'stream_thumbnail_live_holder stream_thumbnail_live_holder_grid',
         isHistory: true,
         streamerID: {},
         HasSwitches: true,
@@ -1681,6 +1682,29 @@ function ScreensObj_InitUserLive() {
                     (this.cursor ? '&after=' + this.cursor : '');
             },
             label_init: function () {
+                //The followed live list only exists as Home now (no follows submenu), whatever opened it
+                Main_values.Main_Home = true;
+
+                //Home adds the featured rows, so switching between Home and the follows menu reloads the list
+                if (this.homeLoaded !== Main_values.Main_Home) {
+                    this.status = false;
+                    this.homeLoaded = Main_values.Main_Home;
+                }
+
+                //Home: the same followed live list as part of the main menu, see Sidepannel_GoHome
+                if (Main_values.Main_Home) {
+                    ScreensObj_CheckUser(this.screen);
+                    Main_values.Sidepannel_IsUser = false;
+                    Sidepannel_SetDefaultLabels();
+                    Sidepannel_SetTopOpacity(this.screen);
+                    ScreensObj_SetTopLable(STR_HOME);
+                    //"Followed live" is the section title above the rows, not part of the top bar
+                    Main_textContent('home_section_title', STR_HOME_LIVE);
+                    Main_ShowElement('home_section_title');
+                    return;
+                }
+
+                Main_HideElement('home_section_title');
                 ScreensObj_TopLableUserInit(this.screen);
                 ScreensObj_SetTopLable(STR_USER, STR_LIVE_CHANNELS);
             }
@@ -1690,7 +1714,144 @@ function ScreensObj_InitUserLive() {
 
     ScreenObj[key] = Screens_assign(ScreenObj[key], Base_Live_obj);
 
+    //Home: the featured streams continue the same grid after the followed ones, see ScreensObj_HomeLoadFeatured
+    ScreenObj[key].homeRowClass = ScreenObj[key].rowClass;
+    ScreenObj[key].homeFeaturedRow = -1;
+
+    ScreenObj[key].addCell = function (cell) {
+        if (cell.home_featured) {
+            if (this.homeFeaturedRow < 0) ScreensObj_HomeStartSection(this);
+            this.addCellQuery(cell);
+        } else {
+            this.addCellTemp(cell);
+        }
+    };
+
+    ScreenObj[key].loadDataSuccess = function () {
+        //Nothing is drawn until the featured list arrives, a row added later past the visible ones would never be attached.
+        //Home shows the first page of followed streams only (up to 100), more pages would land after the featured block.
+        //An empty answer never calls setMax, so dataEnded can't be the trigger.
+        if (Main_values.Main_Home && !this.homeFeaturedRequested) {
+            this.dataEnded = true;
+            ScreensObj_HomeLoadFeatured(this.screen);
+            return;
+        }
+
+        Screens_loadDataSuccess(this.screen);
+        ScreensObj_HomeMarkSection(this);
+    };
+
     ScreenObj[key].Set_Scroll();
+}
+
+//Twitch takes at most 10 featured streams (more answers "service error") and has none for most content languages,
+//so when that list comes back empty the block falls back to the most watched streams in the content language
+var ScreensObj_HomeTopQuery = liveQuery.replace('first: 30', 'first: 16').replace('%c', '');
+
+function ScreensObj_HomeLoadFeatured(key) {
+    ScreenObj[key].homeFeaturedRequested = true;
+    Main_textContent('home_section_title', STR_HOME_LIVE);
+
+    var lang = Main_ContentLang !== '' ? ',language:\\"' + Main_ContentLang + '\\"' : '';
+
+    ScreensObj_HomeRequest(
+        key,
+        ScreensObj_HomeFeaturedResult,
+        featuredQuery.replace('%m', Settings_value.enable_mature.defaultValue ? 'true' : 'false').replace('%x', lang)
+    );
+}
+
+function ScreensObj_HomeRequest(key, callback, post) {
+    FullxmlHttpGet(PlayClip_BaseUrl, Play_base_backup_headers_Array, callback, callback, key, key, 'POST', post);
+}
+
+function ScreensObj_HomeParse(resultObj) {
+    if (!resultObj || resultObj.status !== 200) return null;
+
+    try {
+        return JSON.parse(resultObj.responseText).data;
+    } catch (e) {
+        Main_Log('ScreensObj_HomeParse ' + e);
+        return null;
+    }
+}
+
+function ScreensObj_HomeFeaturedResult(resultObj, key) {
+    var data = ScreensObj_HomeParse(resultObj),
+        featured = data && data.featuredStreams;
+
+    if (featured && featured.length) {
+        ScreensObj_HomeAddStreams(key, featured);
+        return;
+    }
+
+    ScreensObj_HomeRequest(
+        key,
+        ScreensObj_HomeTopResult,
+        //Language is an enum there, no quotes (same as the Live screen query)
+        ScreensObj_HomeTopQuery.replace('%l', Main_ContentLang === '' ? '' : ',languages:' + Languages_Selected)
+    );
+}
+
+function ScreensObj_HomeTopResult(resultObj, key) {
+    var data = ScreensObj_HomeParse(resultObj),
+        edges = data && data.streams && data.streams.edges,
+        streams = [],
+        i = 0,
+        len = edges ? edges.length : 0;
+
+    //same cell shape as the featured list, {stream: {...}}
+    for (i; i < len; i++) {
+        if (edges[i] && edges[i].node) streams.push({stream: edges[i].node});
+    }
+
+    ScreensObj_HomeAddStreams(key, streams);
+}
+
+function ScreensObj_HomeAddStreams(key, streams) {
+    var obj = ScreenObj[key],
+        i = 0,
+        len = streams.length;
+
+    if (len && Main_values.Main_Home) {
+        for (i; i < len; i++) {
+            if (streams[i]) streams[i].home_featured = true;
+        }
+
+        obj.data = (obj.data || []).concat(streams);
+    }
+
+    //Featured failing still has to show the followed list (or the empty banner)
+    obj.loadDataSuccess();
+}
+
+//Called by addCell on the first featured cell: close the short followed row so the block starts on a row of its own
+function ScreensObj_HomeStartSection(obj) {
+    if (obj.column_id > 0) {
+        obj.Cells[obj.row_id] = Screens_createRow(obj.screen);
+        obj.tempHtml = [];
+        obj.row_id++;
+        obj.column_id = 0;
+    }
+
+    obj.homeFeaturedRow = obj.row_id;
+
+    if (obj.itemsCount) {
+        //rows of the block are pushed down to make room for its title, see .home_row_featured in index.html
+        obj.rowClass = obj.homeRowClass + ' home_row_featured';
+    } else {
+        //no followed channel is live: the block is the whole page and the top title names it
+        Main_textContent('home_section_title', STR_FEATURED);
+    }
+}
+
+function ScreensObj_HomeMarkSection(obj) {
+    var row = obj.homeFeaturedRow > 0 ? obj.Cells[obj.homeFeaturedRow] : null;
+
+    if (row && !row.getAttribute('data-title')) {
+        row.classList.add('home_row_section');
+        row.setAttribute('data-title', STR_FEATURED);
+    }
 }
 
 function ScreensObj_InitAGame() {
@@ -1799,7 +1960,7 @@ function ScreensObj_InitFeatured() {
             table: 'stream_table_featured',
             screen: key,
             key_pgDown: Main_games,
-            key_pgUp: Main_Live,
+            key_pgUp: Main_games,
             base_post: featuredQuery,
             CheckContentLang: 1,
             set_url: function () {
@@ -1846,7 +2007,8 @@ function ScreensObj_InitClip() {
             isQuery: true,
             table: 'stream_table_clip',
             screen: key,
-            key_pgDown: Main_Live,
+            //the Live screen is gone from the menu, see Sidepannel_MainOrder
+            key_pgDown: Main_Featured,
             key_pgUp: Main_Vod,
             CheckContentLang: 1,
             ContentLang: '',
@@ -2035,7 +2197,7 @@ function ScreensObj_InitGame() {
             ScreenName: 'Game',
             table: 'stream_table_games',
             screen: key,
-            key_pgDown: Main_Vod,
+            key_pgDown: Main_Featured,
             key_pgUp: Main_Featured,
             object: 'edges',
             isQuery: true,
@@ -2098,7 +2260,7 @@ function ScreensObj_InitUserGames() {
             ScreenName: 'UserGames',
             table: 'stream_table_user_games',
             screen: key,
-            key_pgDown: Main_UserVod,
+            key_pgDown: Main_UserChannels,
             key_pgUp: Main_UserLive,
             isLive: false,
             hasGameProp: true,
@@ -2226,7 +2388,7 @@ function ScreensObj_InitUserChannels() {
             screen: key,
             IsUser: true,
             key_pgDown: Main_History[Main_values.HistoryPos],
-            key_pgUp: Main_UserVod,
+            key_pgUp: Main_usergames,
             getFollowed: true,
             object: 'edges',
             isQuery: true,
@@ -2693,7 +2855,7 @@ function ScreensObj_Blocked() {
             label_init: function () {
                 ScreensObj_CheckUser(this.screen);
                 ScreensObj_TopLableUserInit(this.screen);
-                var mainTitle = 'Blocked',
+                var mainTitle = STR_BLOCKED,
                     extraInfoType = this.isGame ? STR_GAMES : STR_CHANNELS,
                     extraInfoSort = this.sortByDate ? STR_BLOCK_SORT_DATE : STR_BLOCK_SORT_NAME,
                     extraInfo = extraInfoType + STR_SPACE_HTML + extraInfoSort;
@@ -2820,6 +2982,34 @@ function ScreensObj_Blocked() {
     ScreenObj[key].Set_Scroll();
 }
 
+//Content of a switch pill (top row of the game, channel, VOD and clip screens): SVG icon and label,
+//"on" fills the icon, used by the follow switches when following
+var ScreensObj_SwitchIconNames = {
+    'movie-play': 'videos',
+    movie: 'clips',
+    'heart-o': 'follows',
+    history: 'history',
+    'play-1': 'play',
+    play: 'play',
+    settings: 'settings',
+    filmstrip: 'videos',
+    gamepad: 'games'
+};
+
+function ScreensObj_SwitchLabel(icon, text, on) {
+    var name = ScreensObj_SwitchIconNames[icon] || icon;
+
+    return (
+        '<span class="switch_icon' +
+        (on ? ' switch_icon_on' : '') +
+        '">' +
+        Sidepannel_Icon(Sidepannel_IconPaths[name] ? name : 'play') +
+        '</span><span class="switch_label">' +
+        text +
+        '</span>'
+    );
+}
+
 function ScreensObj_addSwitches(StringsArray, key, padding) {
     ScreenObj[key].TopRowCreated = true;
     ScreenObj[key].row = document.createElement('div');
@@ -2834,7 +3024,8 @@ function ScreensObj_addSwitches(StringsArray, key, padding) {
         len = StringsArray.length;
 
     for (i; i < len; i++) {
-        thumbfollow = '<i class="icon-' + ScreenObj[key].SwitchesIcons[i] + ' stream_channel_follow_icon"></i>' + StringsArray[i];
+        //the labels come with leading &nbsp; spacers made for the icon font, the pill has its own gap
+        thumbfollow = ScreensObj_SwitchLabel(ScreenObj[key].SwitchesIcons[i], StringsArray[i].replace(/^(&nbsp;)+/, ''));
         div = document.createElement('div');
         div.setAttribute('id', ScreenObj[key].ids[3] + 'y_' + i);
         div.className = 'stream_cell_period';
@@ -2871,7 +3062,52 @@ function ScreensObj_addBanner(obj, key, forceAdd) {
     div.setAttribute('id', ScreenObj[key].ids[3] + id);
     div.className = 'banner_holder';
 
-    div.innerHTML =
+    if (obj.empty) {
+        //Empty state: a card with the icon of the screen and the message, no remote image
+        //(the img keeps its id, other code looks it up by id)
+        div.className = 'banner_holder banner_empty_holder';
+        div.innerHTML =
+            '<div class="inner_banner_holder banner_empty" id="' +
+            idArray[0] +
+            id +
+            '"><div class="banner_empty_icon">' +
+            Sidepannel_Icon(ScreensObj_EmptyIcon(ScreenObj[key])) +
+            '</div><div class="banner_empty_text">' +
+            obj.text +
+            '</div><img id="' +
+            idArray[1] +
+            id +
+            '" class="hide" alt=""></div>';
+    } else {
+        div.innerHTML = ScreensObj_BannerHtml(obj, key, id, idArray);
+    }
+
+    ScreenObj[key].row.appendChild(div);
+
+    if (!ScreensObj_banner_added_section || forceAdd) {
+        ScreenObj[key].tableDoc.appendChild(ScreenObj[key].row);
+    }
+
+    this.itemsCount += 3;
+    this.column_id += 3;
+
+    ScreenObj[key].BannerTime = new Date().getTime() + AffiliatedTIme;
+
+    ScreensObj_banner_added_section = true;
+    ScreenObj[key].itemsCount += ScreenObj[key].ColumnsCount;
+}
+
+var ScreensObj_EmptyIcons = ['live', 'videos', 'clips', 'games', 'channels'];
+
+function ScreensObj_EmptyIcon(obj) {
+    if (obj.isBlocked) return 'blocked';
+    if (obj.isHistory) return 'history';
+
+    return ScreensObj_EmptyIcons[obj.screenType] || 'live';
+}
+
+function ScreensObj_BannerHtml(obj, key, id, idArray) {
+    return (
         '<div class="inner_banner_holder" id="' +
         idArray[0] +
         id +
@@ -2889,21 +3125,8 @@ function ScreensObj_addBanner(obj, key, forceAdd) {
         ScreenObj[key].img_404 +
         '\';" ></div><div class="banner_text_holder"><div style="text-align: center;" class="stream_text_holder">' +
         obj.text +
-        '</div></div></div>';
-
-    ScreenObj[key].row.appendChild(div);
-
-    if (!ScreensObj_banner_added_section || forceAdd) {
-        ScreenObj[key].tableDoc.appendChild(ScreenObj[key].row);
-    }
-
-    this.itemsCount += 3;
-    this.column_id += 3;
-
-    ScreenObj[key].BannerTime = new Date().getTime() + AffiliatedTIme;
-
-    ScreensObj_banner_added_section = true;
-    ScreenObj[key].itemsCount += ScreenObj[key].ColumnsCount;
+        '</div></div></div>'
+    );
 }
 
 function ScreensObj_CheckIsOpen(key, preventRefresh) {
@@ -2975,6 +3198,9 @@ function ScreensObj_TopLableAgameExit(key) {
 function ScreensObj_TopLableUserInit(key) {
     ScreensObj_CheckUser(key);
 
+    //Any other follows screen leaves Home, so going back to the followed live list shows it in the follows menu
+    Main_values.Main_Home = false;
+
     Sidepannel_SetUserLabels();
     Sidepannel_SetTopOpacity(ScreenObj[key].screen);
 }
@@ -2986,10 +3212,14 @@ function ScreensObj_CheckUser(key) {
     ScreenObj[key].OldUserName = AddUser_UsernameArray[0].name;
 }
 
+//Screen title in the top bar, the optional small text (section, sorting...) is a quieter subtitle next to it
 function ScreensObj_SetTopLable(text, small_text) {
     Main_innerHTML(
         'top_lable',
-        text + STR_SPACE_HTML + (small_text ? '<div style="font-size: 65%;display: inline-block;">' + small_text + '</div>' : '')
+        '<span class="top_lable_main">' +
+            text +
+            '</span>' +
+            (small_text ? '<span class="top_lable_sub">' + small_text.replace(/^(&nbsp;|\s)+/, '') + '</span>' : '')
     );
 }
 

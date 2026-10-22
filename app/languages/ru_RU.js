@@ -26,7 +26,7 @@ function ru_RULang() {
 
     // This is the size of side pannel a adjustments may be needed here so it can fit all words in the horizontal axis
     // If it need ajustment or yours language just copy the below line and change it value until it does
-    Sidepannel_MoveldefaultMargin = 22;
+    Sidepannel_MoveldefaultMargin = 12.7;
 
     //Below are variables to translate
     STR_KEY_UP_DOWN = 'Вверх/Вниз';
@@ -119,6 +119,19 @@ function ru_RULang() {
     STR_CANCEL = 'Отмена';
     STR_RERUN = 'Повтор';
     STR_LIVE_CHANNELS = 'Каналы в эфире';
+    STR_HOME = 'Главная';
+    STR_HOME_LIVE = 'Подписки в эфире';
+    STR_FOLLOWED_GAMES = 'Мои категории';
+    //Player info badge: live, video, clip (Play_SetInfoBadge)
+    STR_PLAYER_BADGES = ['В эфире', 'Запись', 'Клип'];
+    //Settings sections (Settings_Groups): title, hint
+    STR_SETTINGS_GROUPS = [
+        ['Основные', 'Язык, контент, запуск'],
+        ['Плеер', 'Качество, кодеки, перемотка'],
+        ['Интерфейс', 'Чат, внешний вид, экран'],
+        ['Уведомления', 'Кто вышел в эфир, предупреждения'],
+        ['Приложение', 'Резервная копия, обновления']
+    ];
     STR_LIVE_HOSTS = 'Ретрансляции';
     STR_LIVE_GAMES = 'Игры в эфире';
     STR_USER_CHANNEL = 'Отслеживаемое';
@@ -234,7 +247,7 @@ function ru_RULang() {
     STR_REPLAY = 'Повтор';
     STR_STREAM_END = 'выход в';
     STR_STREAM_END_EXIT = 'нажмите назад для выхода';
-    STR_FEATURED = 'На главной странице';
+    STR_FEATURED = 'Рекомендуемые';
     STR_CREATED_AT = 'Создано';
     STR_OPEN_BROADCAST = 'Открыть трансляцию';
     STR_OPEN_LAST_BROADCAST = 'Открыть последний VOD';
@@ -441,8 +454,8 @@ function ru_RULang() {
     STR_GLOBAL_FONT = 'Размер шрифта приложения';
     STR_GLOBAL_FONT_SUMMARY =
         'Это изменит размер всего текста и большинства значков в приложении (за вычетом размера шрифта чата, потому что у него есть собственная настройка). Слишком маленькое значение может не отображаться, слишком большое значение выводит текст за границы, то есть это значение ограничено.';
-    STR_MAIN_MENU = 'Гл. меню';
-    STR_USER_MENU = 'Мой канал';
+    STR_MAIN_MENU = 'Главное меню';
+    STR_USER_MENU = 'Подписки';
     STR_CH_IS_OFFLINE = 'Не в сети';
     STR_ROUND_IMAGES = 'Использовать закругленные аватары каналов';
     STR_ROUND_IMAGES_SUMMARY = 'Поскольку большинство аватаров каналов имеют квадратную форму, некоторые аватары могут выглядеть некорректно.';

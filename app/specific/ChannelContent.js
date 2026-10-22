@@ -210,18 +210,9 @@ function ChannelContent_GetStreamerInfoError() {
 
 function ChannelContent_setFollow() {
     if (AddCode_IsFollowing) {
-        Main_innerHTML(
-            'channel_content_titley_2',
-            '<i class="icon-heart" style="color: #6441a4; font-size: 100%;"></i>' + STR_SPACE_HTML + STR_SPACE_HTML + STR_FOLLOWING
-        );
+        Main_innerHTML('channel_content_titley_2', ScreensObj_SwitchLabel('follows', STR_FOLLOWING, true));
     } else {
-        Main_innerHTML(
-            'channel_content_titley_2',
-            '<i class="icon-heart-o" style="color: #FFFFFF; font-size: 100%; "></i>' +
-                STR_SPACE_HTML +
-                STR_SPACE_HTML +
-                (AddUser_UserIsSet() ? STR_FOLLOW : STR_NOKEY)
-        );
+        Main_innerHTML('channel_content_titley_2', ScreensObj_SwitchLabel('follows', AddUser_UserIsSet() ? STR_FOLLOW : STR_NOKEY));
     }
 }
 
@@ -244,29 +235,37 @@ function ChannelContent_loadDataSuccess() {
             '\';">'
     );
 
-    var streamer_bio = Main_values.Main_selectedChannelDisplayname;
-
-    streamer_bio += Main_values.Main_selectedChannelPartner
-        ? STR_SPACE_HTML +
-          STR_SPACE_HTML +
-          '<img style="display: inline-block; width: 2ch; vertical-align: middle;" alt="" src="' +
-          IMG_PARTNER +
-          '">'
-        : '';
-
-    streamer_bio +=
-        ChannelContent_selectedChannelViews !== ''
-            ? STR_BR + Main_formatNumber(ChannelContent_selectedChannelViews) + Main_GetViewsStrings(ChannelContent_selectedChannelViews)
-            : '';
+    //About panel: name (with the partner badge), followers and views, then the description
+    var streamer_bio =
+        '<div class="channel_about_name">' +
+        Main_values.Main_selectedChannelDisplayname +
+        (Main_values.Main_selectedChannelPartner ? '<img class="channel_about_partner" alt="" src="' + IMG_PARTNER + '">' : '') +
+        '</div>';
 
     streamer_bio +=
         ChannelContent_selectedChannelFollower !== ''
-            ? STR_BR +
+            ? '<div class="channel_about_meta">' +
               Main_formatNumber(ChannelContent_selectedChannelFollower) +
-              (ChannelContent_selectedChannelFollower === 1 ? STR_FOLLOWER : STR_FOLLOWERS)
+              (ChannelContent_selectedChannelFollower === 1 ? STR_FOLLOWER : STR_FOLLOWERS) +
+              '</div>'
             : '';
 
-    streamer_bio += ChannelContent_description !== '' ? STR_BR + STR_BR + STR_ABOUT + ':' + STR_BR + twemoji.parse(ChannelContent_description) : '';
+    streamer_bio +=
+        ChannelContent_selectedChannelViews !== ''
+            ? '<div class="channel_about_meta">' +
+              Main_formatNumber(ChannelContent_selectedChannelViews) +
+              Main_GetViewsStrings(ChannelContent_selectedChannelViews) +
+              '</div>'
+            : '';
+
+    streamer_bio +=
+        ChannelContent_description !== ''
+            ? '<div class="channel_about_label">' +
+              STR_ABOUT +
+              '</div><div class="channel_about_text">' +
+              twemoji.parse(ChannelContent_description) +
+              '</div>'
+            : '';
 
     Main_innerHTML('channel_content_infodiv0_1', streamer_bio);
 
@@ -547,7 +546,7 @@ function ChannelContent_handleKeyBakc() {
         ChannelContent_removeFocus();
         Main_removeEventListener('keydown', ChannelContent_handleKeyDown);
         Main_values.Main_Go = Main_values.Main_BeforeChannel;
-        Main_values.Main_BeforeChannel = Main_Live;
+        Main_values.Main_BeforeChannel = Main_Featured;
         ChannelContent_exit();
         Sidepannel_SetDefaultLabels();
         Main_values.Main_selectedChannel_id = '';

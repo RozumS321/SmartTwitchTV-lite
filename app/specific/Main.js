@@ -57,10 +57,11 @@ var Main_History = [Main_HistoryLive, Main_HistoryVod, Main_HistoryClip];
 
 var Main_GoBefore = '';
 var Main_values = {
-    Main_Go: 1,
-    Main_Before: 1,
-    Main_BeforeSearch: 1,
-    Main_BeforeChannel: 1,
+    //Featured, the Live screen is not in the menu any more
+    Main_Go: Main_Featured,
+    Main_Before: Main_Featured,
+    Main_BeforeSearch: Main_Featured,
+    Main_BeforeChannel: Main_Featured,
     Main_BeforeAgame: Main_games,
     Main_BeforeChannelisSet: false,
     Main_BeforeAgameisSet: false,
@@ -85,6 +86,8 @@ var Main_values = {
     ChatBackground: 12,
     Main_selectedChannelPartner: false,
     Sidepannel_IsUser: false,
+    //The followed live screen (Main_UserLive) opened as the Home of the main menu, see ScreensObj_InitUserLive
+    Main_Home: false,
     My_channel: false,
     DeviceCheck2: false,
     MiboxRevertCheck: false,
@@ -555,10 +558,12 @@ function Main_SetStringsSecondary() {
     Main_textContent('password_save', STR_CONFIRM);
     Main_textContent('password_help', STR_MATURE_HELP_SET_PASS);
 
-    Main_textContent('chanel_button', STR_CHANNELS);
-    Main_textContent('game_button', STR_GAMES);
-    Main_textContent('live_button', STR_LIVE);
-    Main_textContent('vod_button', STR_VIDEOS);
+    //Search: page title and the "search in" chips, each with the icon of its menu entry
+    Main_textContent('search_title', STR_SEARCH);
+    Main_innerHTML('chanel_button', Sidepannel_Icon('channels') + '<span>' + STR_CHANNELS + '</span>');
+    Main_innerHTML('game_button', Sidepannel_Icon('games') + '<span>' + STR_GAMES + '</span>');
+    Main_innerHTML('live_button', Sidepannel_Icon('live') + '<span>' + STR_LIVE + '</span>');
+    Main_innerHTML('vod_button', Sidepannel_Icon('videos') + '<span>' + STR_VIDEOS + '</span>');
     Main_textContent('exit_app_cancel', STR_CANCEL);
     Main_textContent('exit_app_close', STR_CLOSE);
     Main_textContent('yes_no_dialog_button_no', STR_CANCEL);
@@ -585,15 +590,9 @@ function Main_SetStringsSecondary() {
 
     Main_innerHTML('dialog_vod_start_text', STR_FROM_START);
 
-    Main_innerHTML(
-        'channel_content_titley_0',
-        '<i class="icon-movie-play stream_channel_follow_icon"></i>' + STR_SPACE_HTML + STR_SPACE_HTML + STR_VIDEOS
-    );
-    Main_innerHTML('channel_content_titley_1', '<i class="icon-movie stream_channel_follow_icon"></i>' + STR_SPACE_HTML + STR_SPACE_HTML + STR_CLIPS);
-    Main_innerHTML(
-        'channel_content_titley_2',
-        '<i class="icon-heart-o" style="color: #FFFFFF; font-size: 100%; "></i>' + STR_SPACE_HTML + STR_SPACE_HTML + STR_FOLLOW
-    );
+    Main_innerHTML('channel_content_titley_0', ScreensObj_SwitchLabel('videos', STR_VIDEOS));
+    Main_innerHTML('channel_content_titley_1', ScreensObj_SwitchLabel('clips', STR_CLIPS));
+    Main_innerHTML('channel_content_titley_2', ScreensObj_SwitchLabel('follows', STR_FOLLOW));
 
     Main_textContent('dialog_hist_setting_name_0', STR_SORTING);
     Main_textContent('dialog_hist_setting_name_2', STR_DELETE_HISTORY);
@@ -796,29 +795,44 @@ function Main_CounterDialog(x, y, Columns, total) {
     else Main_CounterDialogRst();
 }
 
-function Main_PlayMainShowWarning(string, time, changePos) {
+function Main_PlayMainShowWarning(string, time) {
     if (Main_isScene1DocVisible()) {
-        Main_showWarningDialog(string, time, changePos);
+        Main_showWarningDialog(string, time);
     } else {
         Play_showWarningDialog(string, time);
     }
 }
 
+//Toasts: the warning dialogs slide in at the top center of their scene, see .tv_toast in index.html
+//they stay in the layout and animate with the tv_toast_show class instead of hide
+function Main_ToastShow(doc, textDoc, text) {
+    Main_innerHTMLWithEle(textDoc, text);
+
+    if (Screens_SettingDoAnimations) Main_RemoveClassWithEle(doc, 'tv_toast_no_ani');
+    else Main_AddClassWithEle(doc, 'tv_toast_no_ani');
+
+    Main_AddClassWithEle(doc, 'tv_toast_show');
+}
+
+function Main_ToastHide(doc) {
+    Main_RemoveClassWithEle(doc, 'tv_toast_show');
+}
+
+function Main_ToastIsShowing(doc) {
+    return Main_A_includes_B(doc.className, 'tv_toast_show');
+}
+
 var Main_showWarningDialogId;
-function Main_showWarningDialog(text, timeout, changePos) {
-    var doc = Main_getElementById('dialog_warning');
-
-    if (changePos) doc.style.marginTop = '86vh';
-    else doc.style.marginTop = '50vh';
-
-    Main_innerHTML('dialog_warning_text', text);
-    Main_ShowElementWithEle(doc);
+//Callers still pass a third "changePos" argument from the old centered dialog, the toast always sits on top
+function Main_showWarningDialog(text, timeout) {
+    Main_ToastShow(Main_getElementById('dialog_warning'), Main_getElementById('dialog_warning_text'), text);
 
     if (timeout) Main_showWarningDialogId = Main_setTimeout(Main_HideWarningDialog, timeout, Main_showWarningDialogId);
+    else Main_clearTimeout(Main_showWarningDialogId);
 }
 
 function Main_HideWarningDialog() {
-    Main_HideElement('dialog_warning');
+    Main_ToastHide(Main_getElementById('dialog_warning'));
 }
 
 function Main_AboutDialogUpdateTime() {
@@ -1838,7 +1852,8 @@ function Main_CheckdStyleSheet() {
     Main_ready(function () {
         if (window.getComputedStyle(span, null).getPropertyValue('font-family') !== 'icons') {
             Main_Log('Main_CheckdStyleSheet reloading');
-            Main_LoadStylesheet('https://fgl27.github.io/SmartTwitchTV/release/githubio/css/icons.min.css');
+            //this fork's GitHub Pages, it carries the redesigned stylesheet
+            Main_LoadStylesheet('https://rozums321.github.io/SmartTwitchTV-lite/release/githubio/css/icons.min.css');
         } else Main_Log('Main_CheckdStyleSheet loaded OK');
 
         Main_body.removeChild(span);

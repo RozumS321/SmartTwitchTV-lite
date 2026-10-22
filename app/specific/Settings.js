@@ -900,8 +900,10 @@ function Settings_init() {
     Main_ShowElement('settings_holder');
     Main_IconLoad('label_thumb', 'icon-return', STR_GOBACK);
     Main_HideElement('label_refresh');
+    //opens on the section list with the first section shown
     Settings_cursorY = 0;
-    Settings_inputFocus(Settings_cursorY);
+    Settings_ShowGroup(0);
+    Settings_NavSetFocus(true);
     Main_EventScreen('Settings');
 }
 
@@ -926,8 +928,21 @@ function Settings_SetSettings() {
         dis_ena = [STR_DISABLED, STR_ENABLED];
 
     Settings_value_keys = [];
+    Settings_Groups = [];
 
-    //Individual settings
+    //The page is split in sections like the design: a list of them on the left, the options of one on the right,
+    //Settings_value_keys stays one flat list in display order, each section is a range of it
+    var groupsStr = STR_SETTINGS_GROUPS || [
+        ['General', ''],
+        ['Player', ''],
+        ['Interface', ''],
+        ['Notifications', ''],
+        ['App', '']
+    ];
+
+    //General
+    div += Settings_GroupStart(groupsStr[0]);
+
     Settings_value.content_lang.values[0] = STR_LANG_ALL;
     key = 'content_lang';
     div += Settings_Content(key, Settings_value[key].values, STR_CONTENT_LANG, STR_CONTENT_LANG_SUMMARY);
@@ -938,30 +953,18 @@ function Settings_SetSettings() {
     key = 'app_lang';
     div += Settings_Content(key, Settings_value[key].values, STR_APP_LANG, STR_APP_LANG_SUMMARY);
 
-    //Dialog settings
-    div += Settings_Content('backup_sync', [STR_ENTER_TO_OPEN], STR_BACKUP_SYNC, null);
-    div += Settings_Content('chat_opt', [STR_ENTER_TO_OPEN], STR_CHAT_OPTIONS, null);
-    div += Settings_Content('ui_opt', [STR_ENTER_TO_OPEN], STR_UI_SETTINGS, null);
-    div += Settings_Content('custom_opt', [STR_ENTER_TO_OPEN], STR_GENERAL_CUSTOM, null);
-    div += Settings_Content('livenotification_opt', [STR_ENTER_TO_OPEN], STR_NOTIFICATION_OPT, null);
-    div += Settings_Content('update_settings', [STR_ENTER_TO_OPEN], STR_UPDATE_OPT, null);
-    div += Settings_Content('warnings_opt', [STR_ENTER_TO_OPEN], STR_WARNINGS, null);
-
-    if (!Main_isTV || !Main_IsOn_OSInterface) {
-        div += Settings_Content('dpad_opt', [STR_ENTER_TO_OPEN], STR_DPAD_OPT, null);
-    }
-
     div += Settings_Content('enable_mature', dis_ena, STR_ENABLE_MATURE, STR_ENABLE_MATURE_SUMMARY);
 
     if (!Main_IsOn_OSInterface) {
         div += Settings_Content('enable_embed', array_no_yes, STR_DISABLE_EMBED, STR_DISABLE_EMBED_SUMMARY);
     }
 
-    //Individual settings
     div += Settings_Content('start_user_screen', array_no_yes, STR_START_AT_USER, STR_START_AT_USER_SUMMARY);
 
-    // Player settings title
-    div += Settings_DivTitle('play', STR_SETTINGS_PLAYER);
+    div += Settings_GroupEnd();
+
+    //Player
+    div += Settings_GroupStart(groupsStr[1]);
 
     div += Settings_Content('restor_playback', array_no_yes, STR_RESTORE_PLAYBACK, STR_RESTORE_PLAYBACK_SUMMARY);
 
@@ -997,8 +1000,33 @@ function Settings_SetSettings() {
     div += Settings_Content('vod_seek', [STR_ENTER_TO_OPEN], STR_VOD_SEEK, null);
     div += Settings_Content('playerend_opt', [STR_ENTER_TO_OPEN], STR_END_DIALOG_OPT, null);
 
+    div += Settings_GroupEnd();
+
+    //Interface, notifications and app open option dialogs
+    div += Settings_GroupStart(groupsStr[2]);
+    div += Settings_Content('chat_opt', [STR_ENTER_TO_OPEN], STR_CHAT_OPTIONS, null);
+    div += Settings_Content('ui_opt', [STR_ENTER_TO_OPEN], STR_UI_SETTINGS, null);
+    div += Settings_Content('custom_opt', [STR_ENTER_TO_OPEN], STR_GENERAL_CUSTOM, null);
+
+    if (!Main_isTV || !Main_IsOn_OSInterface) {
+        div += Settings_Content('dpad_opt', [STR_ENTER_TO_OPEN], STR_DPAD_OPT, null);
+    }
+
+    div += Settings_GroupEnd();
+
+    div += Settings_GroupStart(groupsStr[3]);
+    div += Settings_Content('livenotification_opt', [STR_ENTER_TO_OPEN], STR_NOTIFICATION_OPT, null);
+    div += Settings_Content('warnings_opt', [STR_ENTER_TO_OPEN], STR_WARNINGS, null);
+    div += Settings_GroupEnd();
+
+    div += Settings_GroupStart(groupsStr[4]);
+    div += Settings_Content('backup_sync', [STR_ENTER_TO_OPEN], STR_BACKUP_SYNC, null);
+    div += Settings_Content('update_settings', [STR_ENTER_TO_OPEN], STR_UPDATE_OPT, null);
+    div += Settings_GroupEnd();
+
     Main_innerHTML('settings_main', div);
     Settings_positions_length = Settings_value_keys.length;
+    Settings_SetNav();
 
     //Update array that are base on strings
     var i = 0,
@@ -1056,8 +1084,130 @@ function Settings_Content(key, valuesArray, STR, STR_SUMMARY) {
     return STR_SUMMARY ? Settings_DivOptionWithSummary(key, STR, STR_SUMMARY) : Settings_DivOptionNoSummary(key, STR);
 }
 
-function Settings_DivTitle(key, string) {
-    return '<div id="setting_title_' + key + '" class="settings_section">' + string + '</div>';
+//Sections of the settings page, see Settings_SetSettings. The remote is either on the section list (Settings_NavFocus)
+//or on the options of the shown section, Right/Enter goes in, Back/Left goes out
+var Settings_Groups = [];
+var Settings_GroupPos = 0;
+var Settings_NavFocus = false;
+
+function Settings_GroupStart(strings) {
+    var pos = Settings_Groups.length;
+
+    Settings_Groups.push({
+        title: strings[0],
+        hint: strings[1],
+        start: Settings_value_keys.length,
+        end: Settings_value_keys.length
+    });
+
+    return (
+        '<div id="settings_group_' +
+        pos +
+        '" class="settings_group hide"><div class="settings_group_kicker">' +
+        STR_SETTINGS +
+        '</div><div class="settings_group_title">' +
+        strings[0] +
+        '</div>'
+    );
+}
+
+function Settings_GroupEnd() {
+    Settings_Groups[Settings_Groups.length - 1].end = Settings_value_keys.length - 1;
+    return '</div>';
+}
+
+function Settings_SetNav() {
+    var html = '',
+        i = 0,
+        len = Settings_Groups.length;
+
+    for (i; i < len; i++) {
+        html +=
+            '<div id="settings_nav_' +
+            i +
+            '" class="settings_nav_item"><span class="settings_nav_label">' +
+            Settings_Groups[i].title +
+            '</span><span class="settings_nav_hint">' +
+            Settings_Groups[i].hint +
+            '</span></div>';
+    }
+
+    Main_innerHTML('settings_nav_list', html);
+
+    if (Settings_GroupPos >= len) Settings_GroupPos = 0;
+    Settings_ShowGroup(Settings_GroupPos);
+}
+
+function Settings_ShowGroup(pos) {
+    var i = 0,
+        len = Settings_Groups.length;
+
+    for (i; i < len; i++) {
+        if (i === pos) {
+            Main_ShowElement('settings_group_' + i);
+            Main_AddClass('settings_nav_' + i, 'settings_nav_active');
+        } else {
+            Main_HideElement('settings_group_' + i);
+            Main_RemoveClass('settings_nav_' + i, 'settings_nav_active');
+        }
+    }
+
+    Settings_GroupPos = pos;
+    Main_getElementById('settings_scroll').scrollTop = 0;
+}
+
+function Settings_GroupOf(position) {
+    var i = 0,
+        len = Settings_Groups.length;
+
+    for (i; i < len; i++) {
+        if (position >= Settings_Groups[i].start && position <= Settings_Groups[i].end) return i;
+    }
+
+    return 0;
+}
+
+function Settings_NavSetFocus(focused) {
+    Settings_NavFocus = focused;
+
+    if (focused) Main_AddClass('settings_holder', 'settings_nav_focus');
+    else Main_RemoveClass('settings_holder', 'settings_nav_focus');
+}
+
+function Settings_NavGoIn() {
+    Settings_cursorY = Settings_Groups[Settings_GroupPos].start;
+    Settings_inputFocus(Settings_cursorY);
+}
+
+function Settings_NavGoOut() {
+    Settings_RemoveInputFocus();
+    Settings_NavSetFocus(true);
+}
+
+function Settings_handleKeyDownNav(event) {
+    switch (event.keyCode) {
+        case KEY_KEYBOARD_BACKSPACE:
+        case KEY_RETURN:
+            if (Main_isAboutDialogVisible()) Main_HideAboutDialog();
+            else if (Main_isControlsDialogVisible()) Main_HideControlsDialog();
+            else {
+                Settings_exit();
+                Main_SwitchScreen();
+            }
+            break;
+        case KEY_UP:
+            if (Settings_GroupPos > 0) Settings_ShowGroup(Settings_GroupPos - 1);
+            break;
+        case KEY_DOWN:
+            if (Settings_GroupPos < Settings_Groups.length - 1) Settings_ShowGroup(Settings_GroupPos + 1);
+            break;
+        case KEY_RIGHT:
+        case KEY_ENTER:
+            Settings_NavGoIn();
+            break;
+        default:
+            break;
+    }
 }
 
 function Settings_DivOptionNoSummary(key, string) {
@@ -1324,7 +1474,13 @@ function Settings_Obj_length(key) {
 }
 
 function Settings_inputFocus(position) {
-    var key = Settings_value_keys[position];
+    var key = Settings_value_keys[position],
+        group = Settings_GroupOf(position);
+
+    //callers outside the page (password, language change, mouse) may focus any option, show its section
+    if (group !== Settings_GroupPos) Settings_ShowGroup(group);
+    Settings_NavSetFocus(false);
+
     Main_AddClass(key, 'settings_value_focus');
     Main_AddClass(key + '_div', 'settings_div_focus');
     Settings_Setarrows(position);
@@ -1931,77 +2087,29 @@ function Settings_HideElem(elem, hide) {
     else Main_RemoveClass(elem, 'opacity_zero');
 }
 
-var Settings_CurY = 0;
-
-function Settings_ScrollDown() {
-    Settings_Do_ScrollDown('settings_scroll');
-}
-
-function Settings_ScrollUp() {
-    Settings_Do_ScrollUp('settings_scroll');
-}
-
-function Settings_Do_ScrollDown(docId) {
-    var doc = Main_getElementById(docId);
-    doc.scrollTop = doc.scrollHeight;
-    if (Settings_Obj_default('app_animations')) {
-        var position = doc.scrollTop;
-        doc.scrollTop = 0;
-        scrollTo(doc, position, 200);
-    }
-}
-
-function Settings_Do_ScrollUp(docId) {
-    var doc = Main_getElementById(docId);
-    if (Settings_Obj_default('app_animations')) scrollTo(doc, 0, 200);
-    else doc.scrollTop = 0;
-}
-
+//The rows are cards of different heights, keep the focused one in the middle of the page instead of jumping by halves
 function Settings_ScrollTable() {
-    var scrolPos = 14,
-        offset = 1; //!Main_isTV || !Main_IsOn_OSInterface ? 1 : 0;
+    var doc = Main_getElementById('settings_scroll'),
+        row = Main_getElementById(Settings_value_keys[Settings_cursorY] + '_div');
 
-    if (Settings_CurY < Settings_cursorY && Settings_cursorY === scrolPos + offset) {
-        Settings_ScrollDown();
-    } else if (Settings_CurY > Settings_cursorY && Settings_cursorY === scrolPos - 1 + offset) {
-        Settings_ScrollUp();
+    if (!doc || !row) return;
+
+    var target = row.offsetTop - (doc.clientHeight - row.offsetHeight) / 2,
+        max = doc.scrollHeight - doc.clientHeight;
+
+    if (target > max) target = max;
+    if (target < 0) target = 0;
+
+    if (doc.scrollTo) {
+        doc.scrollTo({top: target, behavior: Settings_Obj_default('app_animations') ? 'smooth' : 'auto'});
+    } else {
+        doc.scrollTop = target;
     }
-
-    Settings_CurY = Settings_cursorY;
 }
 
 function Settings_ScrollTableReset() {
     Main_getElementById('settings_scroll').scrollTop = 0;
-    Settings_CurY = 0;
 }
-
-function scrollTo(element, to, duration) {
-    var start = element.scrollTop,
-        change = to - start,
-        currentTime = 0,
-        increment = 3;
-
-    var animateScroll = function () {
-        currentTime += increment;
-        var val = Math.easeInOutQuad(currentTime, start, change, duration);
-        element.scrollTop = val;
-        if (currentTime < duration) {
-            setTimeout(animateScroll, increment);
-        }
-    };
-    animateScroll();
-}
-
-//t = current time
-//b = start value
-//c = change in value
-//d = duration
-Math.easeInOutQuad = function (t, b, c, d) {
-    t /= d / 2;
-    if (t < 1) return (c / 2) * t * t + b;
-    t--;
-    return (-c / 2) * (t * (t - 2) - 1) + b;
-};
 
 function Settings_handleKeyLeft(key) {
     if (Settings_Obj_default(key) > 0) {
@@ -2018,31 +2126,40 @@ function Settings_handleKeyRight(key) {
 }
 
 function Settings_handleKeyDown(event) {
+    if (Settings_NavFocus) {
+        Settings_handleKeyDownNav(event);
+        return;
+    }
+
+    var group = Settings_Groups[Settings_GroupPos];
+
     switch (event.keyCode) {
         case KEY_KEYBOARD_BACKSPACE:
         case KEY_RETURN:
             if (Main_isAboutDialogVisible()) Main_HideAboutDialog();
             else if (Main_isControlsDialogVisible()) Main_HideControlsDialog();
-            else {
-                Settings_exit();
-                Main_SwitchScreen();
-            }
+            else Settings_NavGoOut();
             break;
         case KEY_LEFT:
-            Settings_handleKeyLeft(Settings_value_keys[Settings_cursorY]);
+            //at the first value (or on an option that opens a dialog) Left goes back to the section list
+            if (Settings_Obj_default(Settings_value_keys[Settings_cursorY]) > 0) {
+                Settings_handleKeyLeft(Settings_value_keys[Settings_cursorY]);
+            } else {
+                Settings_NavGoOut();
+            }
             break;
         case KEY_RIGHT:
             Settings_handleKeyRight(Settings_value_keys[Settings_cursorY]);
             break;
         case KEY_UP:
-            if (Settings_cursorY > 0) {
+            if (Settings_cursorY > group.start) {
                 Settings_RemoveInputFocus();
                 Settings_cursorY--;
                 Settings_inputFocus(Settings_cursorY);
             }
             break;
         case KEY_DOWN:
-            if (Settings_cursorY < Settings_positions_length - 1) {
+            if (Settings_cursorY < group.end) {
                 Settings_RemoveInputFocus();
                 Settings_cursorY++;
                 Settings_inputFocus(Settings_cursorY);

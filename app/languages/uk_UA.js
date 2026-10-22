@@ -119,6 +119,19 @@ function uk_UALang() {
     STR_CANCEL = 'Назад';
     STR_RERUN = 'Запустити знову';
     STR_LIVE_CHANNELS = 'Канали в ефірі';
+    STR_HOME = 'Головна';
+    STR_HOME_LIVE = 'Підписки в ефірі';
+    STR_FOLLOWED_GAMES = 'Мої категорії';
+    //Player info badge: live, video, clip (Play_SetInfoBadge)
+    STR_PLAYER_BADGES = ['В ефірі', 'Запис', 'Кліп'];
+    //Settings sections (Settings_Groups): title, hint
+    STR_SETTINGS_GROUPS = [
+        ['Основні', 'Мова, контент, запуск'],
+        ['Плеєр', 'Якість, кодеки, перемотка'],
+        ['Інтерфейс', 'Чат, вигляд, екран'],
+        ['Сповіщення', 'Хто вийшов в ефір, попередження'],
+        ['Застосунок', 'Резервна копія, оновлення']
+    ];
     STR_LIVE_HOSTS = 'Хости';
     STR_LIVE_GAMES = 'Ігри в ефірі';
     STR_USER_CHANNEL = 'Улюблені канали';

@@ -26,7 +26,8 @@ function en_USLang() {
 
     // This is the size of side pannel a adjustments may be needed here so it can fit all words in the horizontal axis
     // If it need ajustment or yours language just copy the below line and change it value until it does
-    Sidepannel_MoveldefaultMargin = 14.5;
+    //Open side menu width is this + 4 (% of the screen), 12.7 gives the 320px of the 1080p spec
+    Sidepannel_MoveldefaultMargin = 12.7;
 
     //Below are variables to translate
     STR_NUMBER_SEPARATOR = ',';
@@ -120,6 +121,19 @@ function en_USLang() {
     STR_CANCEL = 'Cancel';
     STR_RERUN = 'Rerun';
     STR_LIVE_CHANNELS = 'Channels live';
+    STR_HOME = 'Home';
+    STR_HOME_LIVE = 'Followed live';
+    STR_FOLLOWED_GAMES = 'My categories';
+    //Player info badge: live, video, clip (Play_SetInfoBadge)
+    STR_PLAYER_BADGES = ['Live', 'Video', 'Clip'];
+    //Settings sections (Settings_Groups): title, hint
+    STR_SETTINGS_GROUPS = [
+        ['General', 'Language, content, start'],
+        ['Player', 'Quality, codecs, seeking'],
+        ['Interface', 'Chat, look, screen'],
+        ['Notifications', 'Who went live, warnings'],
+        ['App', 'Backup, updates']
+    ];
     STR_LIVE_HOSTS = 'Hosts';
     STR_LIVE_GAMES = 'Games live';
     STR_USER_CHANNEL = 'Followed Channels';

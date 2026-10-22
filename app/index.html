@@ -189,14 +189,16 @@
                 will-change: transform;
             }
 
+            /* Screens with the switch pills on top: the pills start under the top bar, like the game grid */
             .screen_holder_switch {
-                top: 2.6%;
-                height: 97.4%;
+                top: 6.4%;
+                height: 93.6%;
             }
 
+            /* Room under the top bar for the focus ring of the first row */
             .screen_holder_games {
-                top: 4.5%;
-                height: 95.5%;
+                top: 6.4%;
+                height: 93.6%;
             }
 
             .screen_holder_channel {
@@ -369,9 +371,10 @@
                 position: relative;
             }
 
+            /* 6 columns (Main_ColumnsCountGame): (13.83% + 2% padding) x 6 = 95%, the row width */
             .stream_thumbnail_blocked_game_holder,
             .stream_thumbnail_game_holder {
-                width: 17%;
+                width: 13.83%;
                 display: inline-block;
                 padding: 1%;
                 padding-top: 0;
@@ -379,7 +382,7 @@
             }
 
             .stream_thumbnail_blocked_game_holder {
-                width: 16.5%;
+                width: 13.4%;
             }
 
             .stream_thumbnail_game_feed,
@@ -1375,6 +1378,10 @@
                 margin-left: -15.75%;
             }
 
+            /* Side menu. Sizes are vh so they match the 1080p spec on any screen (1vh = 10.8px at 1080p):
+               row 60 px = 5.556vh, gap 6 = 0.556vh, icon 26 = 2.407vh, radius 16 = 1.481vh.
+               side_panel_movel is the open menu, side_panel_fix the collapsed rail; both use the same order and
+               row heights so the icons do not jump when the menu opens or closes. */
             .side_panel_fix,
             .side_panel_movel {
                 position: absolute;
@@ -1385,131 +1392,316 @@
                 transform: translateX(0);
                 transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
                 will-change: transform;
-                /* on chrome do to the focus class side_panel_new_icons_text that uses background: linear-gradient
-                                    is needed to add a border here to prevent visual glitches right on the border of the element
-                                    border-right: 2px solid #000000;*/
+                display: flex;
+                flex-direction: column;
+                gap: 0.556vh;
+                box-sizing: border-box;
+                padding: 4.444vh 1.852vh 2.593vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
             }
 
+            /* The rail keeps 1% under the screen edge like the old strip, the padding brings its content back */
             .side_panel_fix {
-                transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+                width: 5.4%;
+                padding-left: 1%;
+                padding-right: 0;
+                align-items: center;
                 z-index: 3;
-                height: 100%;
+                transition:
+                    margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            /* The open menu draws its own icons, the rail fades out under it */
+            .side_panel_fix_open {
+                opacity: 0;
             }
 
             .side_panel_background_color {
-                background-color: #000000;
+                background-color: var(--tv-panel);
             }
 
-            .side_panel_fix_top_2,
-            .side_panel_fix_top {
-                height: 42%;
+            .side_panel_movel {
+                border-right: 1px solid var(--tv-line-soft);
             }
 
-            .side_panel_fix_top_2 {
-                height: 42%;
-                transform: translateY(-65%);
+            /* Logo */
+            .side_panel_logo {
+                order: -3;
+                display: flex;
+                align-items: center;
+                gap: 1.296vh;
+                flex-shrink: 0;
+                height: 4.444vh;
+                margin-bottom: 3.519vh;
+                padding: 0 1.111vh;
             }
 
-            .side_panel_fix_bottom {
-                height: 32%;
-                transform: translateY(-172%);
+            .side_panel_logo_mark {
+                order: -3;
+                width: 4.444vh;
+                height: 4.444vh;
+                flex-shrink: 0;
+                border-radius: 1.296vh;
+                background: var(--tv-accent);
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .side_panel_fix_center {
-                height: 42%;
-                transform: translateY(-118%);
+            .side_panel_fix .side_panel_logo_mark {
+                margin-bottom: 3.519vh;
             }
 
-            .side_panel_movel_bottom_holder {
-                height: 35%;
-                padding-top: 9vh;
-                padding-left: 0.5vw;
-                color: #ffffff;
-                font-size: 75%;
-                text-shadow:
-                    -0.03em -0.03em 0 #000,
-                    0.03em -0.03em 0 #000,
-                    -0.03em 0.03em 0 #000,
-                    0.03em 0.03em 0 #000;
+            .side_panel_logo_mark svg {
+                width: 2.407vh;
+                height: 2.407vh;
             }
 
-            .side_panel_movel_bottom_text {
-                height: 25%;
-                width: auto;
+            .side_panel_logo_text {
+                display: flex;
+                flex-direction: column;
+                white-space: nowrap;
             }
 
-            .side_panel_new_icons_text_holder,
+            .side_panel_logo_title {
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 2.593vh;
+                line-height: 1;
+                letter-spacing: -0.01em;
+                color: var(--tv-text);
+            }
+
+            .side_panel_logo_sub {
+                margin-top: 0.278vh;
+                font-weight: 600;
+                font-size: 1.389vh;
+                color: var(--tv-accent-ink);
+            }
+
+            /* Open menu rows */
+            .side_panel_row {
+                display: flex;
+                align-items: center;
+                gap: 1.481vh;
+                flex-shrink: 0;
+                height: 5.556vh;
+                padding: 0 1.667vh;
+                border-radius: 1.481vh;
+                font-weight: 600;
+                font-size: 1.944vh;
+                white-space: nowrap;
+                color: var(--tv-text-2);
+                transition:
+                    background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            /* Mouse events land on the row itself, BrowserTest reads the row id */
+            .side_panel_row * {
+                pointer-events: none;
+            }
+
+            .side_panel_row_icon {
+                width: 2.407vh;
+                height: 2.407vh;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--tv-icon);
+            }
+
+            .side_panel_svg {
+                width: 2.407vh;
+                height: 2.407vh;
+                display: block;
+            }
+
+            .side_panel_row_label {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Collapsed rail tiles, same height as a row so each icon stays on its line */
             .side_panel_new_icons {
-                width: 80%;
-                height: 9.25%;
-                margin-top: 0.7vh;
-                position: relative;
-                color: #ffffff;
-                font-size: 100%;
-                text-align: center;
-                text-shadow:
-                    -0.02em -0.02em 0 #000,
-                    0.02em -0.02em 0 #000,
-                    -0.02em 0.02em 0 #000,
-                    0.02em 0.02em 0 #000;
-            }
-
-            .side_panel_new_text_options,
-            .side_panel_new_icons_text_holder,
-            .side_panel_new_icons {
-                border-top: 0.05em solid;
-                border-bottom: 0.05em solid;
-                border-image: linear-gradient(#000000, #000000) 1;
+                width: 5.556vh;
+                height: 5.556vh;
+                flex-shrink: 0;
                 box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 1.481vh;
+                color: var(--tv-icon);
             }
 
-            .side_panel_new_icons {
-                margin-left: 20%;
+            /* Settings and exit, a step smaller than the nav rows */
+            .side_panel_row.side_panel_row_small {
+                height: 4.815vh;
+                border-radius: 1.296vh;
+                font-size: 1.759vh;
+                color: var(--tv-muted);
             }
 
-            .side_panel_new_icons_text_holder {
-                padding-left: 8vh;
-                width: auto;
-                text-align: left;
-                font-size: 1.1em;
+            .side_panel_new_icons.side_panel_row_small {
+                width: 4.815vh;
+                height: 4.815vh;
+                border-radius: 1.296vh;
             }
 
-            .side_panel_new_icons_text {
-                background: linear-gradient(to right, #000000 18%, rgba(255, 255, 255, 0.3), #000000 80%);
-                border-image: linear-gradient(to right, #000000 18%, #d0d3d4, #000000 80%) 1 !important;
+            .side_panel_row_small .side_panel_svg {
+                width: 2.222vh;
+                height: 2.222vh;
             }
 
-            .side_panel_new_icons_text_botton {
-                background: linear-gradient(to right, #000000 0%, rgba(255, 255, 255, 0.3), #000000 70%);
-                border-image: linear-gradient(to right, #000000 0%, #d0d3d4, #000000 70%) 1 !important;
+            .side_panel_divider {
+                height: 1px;
+                flex-shrink: 0;
+                margin: 1.111vh 1.667vh;
+                background: var(--tv-line-soft);
             }
 
-            .side_panel_new_icons_pad {
-                vertical-align: sub;
+            .side_panel_fix .side_panel_divider {
+                width: 3.704vh;
+                margin: 1.111vh 0;
             }
 
+            .side_panel_spacer {
+                flex-grow: 1;
+            }
+
+            /* Follows menu: label above its rows, the rail keeps an empty box of the same height */
+            .side_panel_section {
+                display: none;
+                order: -1;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                height: 3.889vh;
+                padding: 1.667vh 1.667vh 0;
+                font-weight: 700;
+                font-size: 1.296vh;
+                line-height: 1.6vh;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                white-space: nowrap;
+                color: var(--tv-accent-ink);
+            }
+
+            .side_panel_user .side_panel_section {
+                display: block;
+            }
+
+            .side_panel_user .side_panel_row_mode {
+                order: -2;
+            }
+
+            .side_panel_user .side_panel_divider,
+            .side_panel_user .side_panel_row_home,
+            .side_panel_no_user .side_panel_divider {
+                display: none;
+            }
+
+            /* The screen you are on */
+            .side_panel_row_current,
             .side_panel_new_icons_start {
-                background: linear-gradient(to right, #000000 8%, rgba(255, 255, 255, 0.3), #000000 92%);
-                border-image: linear-gradient(to right, #000000 8%, #d0d3d4, #000000 92%) 1 !important;
+                background-color: var(--tv-accent-tint);
+                color: var(--tv-text);
             }
 
-            .side_panel_movel_user_text,
-            .side_panel_movel_top_text {
-                color: #ffffff;
-                font-size: 75%;
-                position: absolute;
-                padding-top: 1vh;
-                left: 25%;
-                width: 75%;
+            .side_panel_row_current .side_panel_row_icon,
+            .side_panel_new_icons_start {
+                color: var(--tv-accent-ink);
             }
 
-            .side_panel_movel_user_text {
-                transform: translateY(-115%);
-                text-decoration: underline;
+            /* Remote focus, set by Sidepannel_AddFocusMain */
+            .side_panel_row_focus,
+            .side_panel_row.side_panel_row_small.side_panel_row_focus {
+                background-color: var(--tv-text);
+                color: var(--tv-bg);
+                font-weight: 700;
+            }
+
+            .side_panel_row_focus .side_panel_row_icon {
+                color: var(--tv-accent);
+            }
+
+            /* Focus on the current screen keeps a dot so you still see where you are */
+            .side_panel_row_current.side_panel_row_focus::after {
+                content: '';
+                width: 0.926vh;
+                height: 0.926vh;
+                flex-shrink: 0;
+                margin-left: auto;
+                border-radius: 50%;
+                background: var(--tv-accent);
+            }
+
+            /* Account card */
+            .side_panel_row.side_panel_row_account {
+                height: 7.037vh;
+                margin-top: 1.296vh;
+                padding: 0 1.296vh;
+                gap: 1.296vh;
+                border-radius: 1.667vh;
+                background-color: var(--tv-surface);
+                color: var(--tv-text);
+            }
+
+            .side_panel_row.side_panel_row_account.side_panel_row_focus {
+                background-color: var(--tv-text);
+                color: var(--tv-bg);
+            }
+
+            .side_panel_new_icons.side_panel_row_account {
+                width: auto;
+                height: 7.037vh;
+                margin-top: 1.296vh;
+            }
+
+            .side_panel_avatar,
+            .side_panel_row_avatar {
+                width: 4.074vh;
+                height: 4.074vh;
+                flex-shrink: 0;
+                border-radius: 50%;
+                overflow: hidden;
+                background: var(--tv-line);
             }
 
             img.side_panel_new_img {
-                width: 70%;
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: cover;
+            }
+
+            .side_panel_row_account .side_panel_row_label {
+                display: flex;
+                flex-direction: column;
+                gap: 0.278vh;
+            }
+
+            .side_panel_row_name {
+                font-weight: 700;
+                font-size: 1.759vh;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .side_panel_row_sub {
+                font-weight: 500;
+                font-size: 1.296vh;
+                color: var(--tv-muted);
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .side_panel_row_focus .side_panel_row_sub {
+                color: #4a4857;
             }
 
             .side_panel {
@@ -1622,9 +1814,10 @@
                 color: #ff2121;
             }
 
+            /* 6.6% leaves a gap after the side menu rail (5.4% wide, 1% of it off screen), same as the game grids */
             .streams_div {
-                margin-left: 4.6%;
-                width: 94.5%;
+                margin-left: 6.6%;
+                width: 92.5%;
                 height: 100%;
             }
 
@@ -1640,17 +1833,22 @@
                 padding: 0.3em;
             }
 
+            /* Position in the grid, "3/30", a quiet pill in the bottom right corner */
             .counter_class {
-                width: 100%;
-                text-align: left;
-                word-wrap: break-word;
-                color: #ffffff;
-                font-size: 70%;
-                font-family: 'Roboto-Bold';
-                text-shadow:
-                    #000000 0 0 0.15em,
-                    #000000 0 0 0.15em,
-                    #000000 0 0 0.1em;
+                padding: 0.5vh 1.2vh;
+                border-radius: 999px;
+                background-color: rgba(21, 21, 27, 0.88);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.5vh;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+                white-space: nowrap;
+                color: var(--tv-text-2);
+            }
+
+            .counter_class:empty {
+                display: none;
             }
 
             .dialog_period,
@@ -1724,40 +1922,123 @@
                 max-width: 77%;
             }
 
-            .top_lable {
-                text-align: center;
-                width: 100%;
-                color: #ffffff;
-                font-size: 130%;
-                font-family: 'Roboto-Bold';
-                position: absolute;
-                /* 1vh offset to hide content that may show benhide it*/
-                top: 1vh;
-            }
-
+            /* Top bar: screen title and last refresh on the left, remote hints then the clock on the right.
+               The bar is pulled up 1vh to hide content that may show behind it, so its visible part is 0 to 4.35vh
+               and the top padding puts the row back in the middle of that. */
             .topbar {
                 position: absolute;
                 margin-left: 4.75%;
                 width: 95.24%;
-                background: rgba(0, 0, 0, 1);
-                /* 1vh offset to hide content that may show benhide it*/
                 height: 5.35%;
                 transform: translateY(-1vh);
+                box-sizing: border-box;
+                /* the right side is kept free for #clock_holder, which sits outside the bar */
+                /* left padding lines the title up with the first card of the grids */
+                padding: 1vh 24vh 0 4vh;
+                display: flex;
+                align-items: center;
+                gap: 1.6vh;
+                background-color: var(--tv-bg);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            .top_lable {
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 2.8vh;
+                line-height: 1;
+                letter-spacing: -0.01em;
+                white-space: nowrap;
+                color: var(--tv-text);
+                display: flex;
+                align-items: baseline;
+                gap: 1.4vh;
+                min-width: 0;
+            }
+
+            /* section or sorting next to the title (ScreensObj_SetTopLable), after a dot */
+            .top_lable_sub {
+                display: inline-flex;
+                align-items: center;
+                gap: 1.4vh;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.75vh;
+                letter-spacing: normal;
+                color: var(--tv-muted);
+            }
+
+            .top_lable_sub::before {
+                content: '';
+                flex-shrink: 0;
+                width: 0.6vh;
+                height: 0.6vh;
+                border-radius: 50%;
+                background-color: var(--tv-line);
+            }
+
+            .top_meta {
+                padding-top: 0.4vh;
+                font-weight: 600;
+                font-size: 1.5vh;
+                white-space: nowrap;
+                color: var(--tv-muted);
             }
 
             .controls_div {
-                float: left;
-                padding-left: 0.5%;
-                /* 1vh offset to hide content that may show benhide it*/
-                padding-top: calc(1vh + 0.2%);
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 1vh;
+            }
+
+            /* Remote hints as quiet pills, the icon font glyphs from Main_IconLoad are left out */
+            .top_hint {
+                display: flex;
+                align-items: center;
+                height: 3vh;
+                padding: 0 1.2vh;
+                border-radius: 1vh;
+                background-color: var(--tv-surface);
+                white-space: nowrap;
+            }
+
+            #label_refresh {
+                height: auto;
+            }
+
+            .controls_div .icon_top_label {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+            }
+
+            .controls_div [id$='_icondiv'] {
+                display: none;
+            }
+
+            .controls_div [id$='_icontext'] {
+                transform: none !important;
             }
 
             .top_clock {
                 position: absolute;
-                right: 2vh;
-                /* 1vh offset to hide content that may show benhide it*/
-                top: 0.2vh;
+                right: 2.4vh;
+                top: 1.1vh;
                 z-index: 4;
+            }
+
+            #label_clock {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.9vh;
+                color: var(--tv-text-2);
+                -webkit-text-stroke: 0;
             }
 
             .opacity_zero {
@@ -2639,18 +2920,62 @@
                 opacity: 1 !important;
             }
 
+            /* Browser only: a pill in the top bar after the hints, its label is a tooltip below it */
             #button_full_screen {
-                background: rgba(0, 0, 0, 0);
+                order: 10;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 3vh;
+                height: 3vh;
+                padding: 0;
                 border: 0;
-                top: 3vh;
-                right: 1vh;
-                position: absolute;
-                font-size: 68%;
+                border-radius: 1vh;
+                background-color: var(--tv-surface);
+                color: var(--tv-muted);
                 cursor: pointer;
+                transition:
+                    background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            #button_full_screen.hide {
+                display: none;
+            }
+
+            #button_full_screen svg {
+                width: 1.7vh;
+                height: 1.7vh;
+                pointer-events: none;
+            }
+
+            #button_full_screen:hover {
+                background-color: var(--tv-accent);
+                color: #ffffff;
+            }
+
+            #button_full_screen_text {
+                position: absolute;
+                top: calc(100% + 1vh);
+                right: 0;
+                padding: 0.8vh 1.2vh;
+                border-radius: 1vh;
+                border: 1px solid var(--tv-line);
+                background-color: rgba(21, 21, 27, 0.96);
+                white-space: nowrap;
+                text-align: right;
+                font-weight: 600;
+                font-size: 1.5vh;
+                line-height: 1.4;
+                color: var(--tv-text-2);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
             }
 
             #button_full_screen:hover > #button_full_screen_text {
-                opacity: 1 !important;
+                opacity: 1;
             }
 
             .scene2_click_button_holder {
@@ -2669,6 +2994,2594 @@
                                     width: 20%;
                                     color: #FFF;
                                 }*/
+
+            /* ==========================================================
+               Twitch for Smart TV redesign layer
+               Overrides only colors, radii and focus states, the layout
+               rules above stay untouched so screen sizing keeps working.
+               Thumbnail focus colors live in SettingsColor.js
+               ========================================================== */
+            :root {
+                --tv-bg: #0f0f13;
+                --tv-panel: #15151b;
+                --tv-surface: #1d1d25;
+                --tv-card: #24232c;
+                --tv-line: #2c2b35;
+                --tv-line-soft: #24242d;
+                --tv-text: #f2f1f5;
+                --tv-text-2: #c9c7d3;
+                --tv-muted: #a3a1ae;
+                --tv-icon: #8e8c99;
+                --tv-accent: #9146ff;
+                --tv-accent-ink: #b787ff;
+                --tv-accent-soft: rgba(145, 70, 255, 0.22);
+                --tv-accent-tint: rgba(145, 70, 255, 0.16);
+                --tv-live: #e5484d;
+            }
+
+            #scene1,
+            .scenefeed_background_no_ani,
+            .scenefeed_background,
+            .topbar,
+            .side_panel_feed_thumb {
+                background-color: var(--tv-bg) !important;
+            }
+
+            .side_panel,
+            #side_panel_new_row_1,
+            .chat_container {
+                background-color: var(--tv-panel) !important;
+            }
+
+            /* Thumbnail placeholders and images */
+            .stream_thumbnail_side,
+            .stream_thumbnail_player_feed,
+            .stream_thumbnail_live_game,
+            .stream_thumbnail_feed_game,
+            .stream_thumbnail_live_img,
+            .stream_thumbnail_channel_img,
+            .stream_thumbnail_game_feed,
+            .stream_thumbnail_channel,
+            .stream_thumbnail_user,
+            .banner_holder,
+            .banner_img_holder,
+            .side_panel_div {
+                background-color: var(--tv-card) !important;
+                border-radius: 1vh;
+            }
+
+            .stream_thumbnail_live_img,
+            .stream_thumbnail_live_game,
+            .stream_thumbnail_feed_game,
+            .stream_thumbnail_channel_img {
+                overflow: hidden;
+                border-radius: 0.8vh;
+            }
+
+            img.stream_img,
+            img.stream_img_follow,
+            img.stream_img_channel {
+                border-radius: 0.8vh;
+            }
+
+            .stream_info_live,
+            .stream_info_game_name,
+            .stream_info_channel_name,
+            .stream_info_user_title {
+                opacity: 0.85;
+            }
+
+            /* Live, VOD and clip grid cards (Screens_createCellLive / Vod / Clip): preview with the focus ring
+               (SettingsColor.js), channel, title, game and stats below on the page */
+            .stream_thumbnail_live {
+                background-color: transparent;
+            }
+
+            .stream_thumbnail_live .stream_thumbnail_live_img,
+            .stream_thumbnail_live img.stream_img {
+                border-radius: 1.2vh;
+            }
+
+            /* Grids of the live, VOD and clip screens: 4 columns (Main_ColumnsCountVideo),
+               (23.75% + 1% padding) x 4 = 99% like the old 3 x 33%. The channel page keeps the base holder.
+               The card is a bit taller than before so name, title, game and stats fit under the smaller preview. */
+            .stream_thumbnail_live_holder.stream_thumbnail_live_holder_grid {
+                width: 23.75%;
+            }
+
+            .stream_thumbnail_live_holder_grid .stream_thumbnail_live {
+                padding-bottom: 88%;
+            }
+
+            /* Row height of those grids, it was sized for 3 columns; the scroll step (offsettop) is measured
+               from the real row, so a shorter row just tightens the gap and lets the next row peek in */
+            .animate_height_transition {
+                height: 43%;
+                /* 2% narrower to keep the right edge after the wider left margin of .streams_div */
+                width: 93%;
+            }
+
+            /* one level more specific than the shared .stream_thumbnail_live_text_holder rules below */
+            .stream_thumbnail_live_holder_grid .stream_thumbnail_live_text_holder .stream_info_live_name {
+                font-size: 1.85vh;
+            }
+
+            .stream_thumbnail_live_holder_grid .stream_thumbnail_live_text_holder .stream_info_live_title,
+            .stream_thumbnail_live_holder_grid .stream_thumbnail_live_text_holder .stream_info_live_title_single_line {
+                font-size: 1.55vh;
+            }
+
+            .stream_thumbnail_live_holder_grid .stream_thumbnail_live_text_holder .stream_info_live {
+                font-size: 1.4vh;
+            }
+
+            /* Watched progress of VODs and clips: SettingsColor.js pushes it below the preview, which now clips
+               (rounded corners), so it sits on the bottom edge inside the preview */
+            .stream_thumbnail_live_img .vod_watched {
+                height: 0.6vh;
+                transform: none;
+            }
+
+            .stream_thumbnail_live_text_holder {
+                padding: 1.1vh 0.3vh 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            .stream_thumbnail_live_text_holder .stream_text_holder {
+                top: auto;
+                transform: none;
+            }
+
+            .stream_thumbnail_live_text_holder .strokedeline {
+                text-shadow: none;
+            }
+
+            .stream_thumbnail_live_text_holder .stream_info_live_name {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 2vh;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            .stream_thumbnail_live_text_holder .stream_info_live_title,
+            .stream_thumbnail_live_text_holder .stream_info_live_title_single_line {
+                margin: 0.4vh 0 0.3vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 500;
+                font-size: 1.7vh;
+                line-height: 1.3;
+                max-height: 2.6em;
+                color: var(--tv-text-2);
+                opacity: 1;
+            }
+
+            .stream_thumbnail_live_text_holder .stream_info_live_title_single_line {
+                max-height: 1.3em;
+            }
+
+            /* language, game, uptime and viewers */
+            .stream_thumbnail_live_text_holder .stream_info_live {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+                opacity: 1;
+            }
+
+            .stream_thumbnail_live_text_holder .live_icon {
+                font-size: 1.2vh;
+                vertical-align: middle;
+            }
+
+            .stream_thumbnail_focused .stream_info_live_title,
+            .stream_thumbnail_focused_no_ani .stream_info_live_title,
+            .stream_thumbnail_focused .stream_info_live_title_single_line,
+            .stream_thumbnail_focused_no_ani .stream_info_live_title_single_line {
+                color: var(--tv-text);
+            }
+
+            /* Category cards: box art with the focus ring (SettingsColor.js), name and stats below on the page */
+            .stream_thumbnail_game {
+                background-color: transparent;
+            }
+
+            .stream_thumbnail_game .stream_thumbnail_live_game,
+            .stream_thumbnail_game img.stream_img {
+                border-radius: 1.2vh;
+            }
+
+            /* .screens adds 0.075ch letter spacing for Roboto, Manrope does not need it */
+            .stream_thumbnail_game_text_holder {
+                padding: 1.2vh 0.4vh 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            .stream_thumbnail_game .stream_text_holder {
+                top: auto;
+                transform: none;
+            }
+
+            .stream_thumbnail_game .stream_info_game_name {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.9vh;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            .game_meta {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3vh;
+                padding-top: 0.5vh;
+                font-weight: 600;
+                font-size: 1.5vh;
+                white-space: nowrap;
+            }
+
+            .game_meta_live {
+                display: flex;
+                align-items: center;
+                gap: 0.7vh;
+                color: var(--tv-text-2);
+            }
+
+            .game_meta_dot {
+                width: 0.8vh;
+                height: 0.8vh;
+                flex-shrink: 0;
+                border-radius: 50%;
+                background-color: var(--tv-live);
+            }
+
+            .game_meta_channels {
+                color: var(--tv-muted);
+            }
+
+            .side_panel_div_focused {
+                box-shadow:
+                    0 0 0 0.4vh var(--tv-bg),
+                    0 0 0 0.9vh var(--tv-accent) !important;
+                border-radius: 1vh;
+            }
+
+            /* Settings rows */
+            .settings_div_focus,
+            .settings_value_focus {
+                border-image: none !important;
+                border-color: transparent;
+            }
+
+            .settings_div_focus {
+                background-color: var(--tv-surface);
+                box-shadow: inset 0 0 0 0.35vh var(--tv-accent);
+                border-radius: 1vh;
+            }
+
+            .settings_value_focus {
+                background-color: transparent;
+                color: var(--tv-accent-ink);
+            }
+
+            .right {
+                border-left-color: var(--tv-accent-ink);
+            }
+
+            .left {
+                border-right-color: var(--tv-accent-ink);
+            }
+
+            /* Buttons: search, dialogs, chat */
+            .button_search_focused,
+            .button_dialog_focused,
+            .button_chat_focused,
+            .dialog_end_icons_focus {
+                background-color: var(--tv-accent) !important;
+                border-color: var(--tv-accent) !important;
+                color: #ffffff !important;
+                box-shadow: 0 1.2vh 2.8vh rgba(0, 0, 0, 0.5);
+            }
+
+            .stream_switch_focused,
+            .feed_end_name_focus {
+                background-color: var(--tv-accent-soft);
+                border-color: var(--tv-accent) !important;
+            }
+
+            .chat_emotes_focus {
+                box-shadow: 0 0 0 0.4vh var(--tv-accent);
+                border-radius: 0.6vh;
+            }
+
+            /* Player: bottom icons and progress bar */
+            .controls_button,
+            .pause_button,
+            .next_button,
+            .progress_bar_div {
+                border-radius: 1.2vh;
+            }
+
+            .progress_bar_div_focus {
+                background-color: var(--tv-accent) !important;
+                border-color: var(--tv-accent) !important;
+                box-shadow:
+                    0 0 0 0.4vh var(--tv-bg),
+                    0 0 0 0.8vh var(--tv-accent),
+                    0 1.2vh 2.8vh rgba(0, 0, 0, 0.5);
+                transform: scale(1.08);
+                transition: transform 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .progress_bar_div.progress_bar_div_focus {
+                transform: translateY(35%);
+                background-color: rgba(15, 15, 19, 0.85) !important;
+            }
+
+            .progress_bar_holder_focus {
+                box-shadow: 0 0 0 0.25vh var(--tv-accent);
+            }
+
+            .progress_bar {
+                background-color: var(--tv-line);
+                border-color: transparent;
+            }
+
+            .inner_progress_circle {
+                box-shadow: 0 0 0 0.4vh var(--tv-accent);
+            }
+
+            .next_img,
+            .end_img {
+                box-shadow:
+                    0 0 0 0.3vh var(--tv-accent),
+                    0 0 0 0.6vh var(--tv-bg);
+            }
+
+            /* Color picker preview frame */
+            .cavas_holder_focused {
+                box-shadow: 0 0 0 0.4vh var(--tv-accent);
+            }
+
+            /* Toasts, top center of their scene, shown by Main_ToastShow.
+               In: drops 2.4vh with a small overshoot. Out: lifts and fades, visibility waits for the fade. */
+            .tv_toast {
+                position: absolute;
+                top: 3.7vh;
+                left: 50%;
+                display: flex;
+                align-items: center;
+                gap: 1.5vh;
+                box-sizing: border-box;
+                max-width: 64vw;
+                padding: 1.5vh 2.6vh 1.5vh 1.5vh;
+                border-radius: 2vh;
+                border: 1px solid var(--tv-line);
+                background-color: rgba(29, 29, 37, 0.97);
+                box-shadow:
+                    0 2.2vh 5vh rgba(0, 0, 0, 0.55),
+                    0 0 0 1px rgba(0, 0, 0, 0.25);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+                pointer-events: none;
+                opacity: 0;
+                visibility: hidden;
+                transform: translate(-50%, -2.4vh) scale(0.96);
+                transition:
+                    opacity 200ms cubic-bezier(0.4, 0, 1, 1) 0s,
+                    transform 240ms cubic-bezier(0.4, 0, 1, 1) 0s,
+                    visibility 0s linear 240ms;
+            }
+
+            .tv_toast_show {
+                opacity: 1;
+                visibility: visible;
+                transform: translate(-50%, 0) scale(1);
+                transition:
+                    opacity 180ms cubic-bezier(0, 0, 0.2, 1) 0s,
+                    transform 420ms cubic-bezier(0.16, 1.3, 0.3, 1) 0s,
+                    visibility 0s linear 0s;
+            }
+
+            /* Settings > animations off */
+            .tv_toast_no_ani {
+                transition: none;
+            }
+
+            .tv_toast_icon {
+                width: 4.4vh;
+                height: 4.4vh;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background-color: var(--tv-accent-tint);
+                color: var(--tv-accent-ink);
+            }
+
+            .tv_toast_icon svg {
+                width: 2.6vh;
+                height: 2.6vh;
+            }
+
+            .tv_toast_text {
+                font-weight: 600;
+                font-size: 2.1vh;
+                line-height: 1.4;
+                color: var(--tv-text);
+                text-align: left;
+                text-shadow: none;
+            }
+
+            /* ==========================================================
+               Player panel (scene_channel_panel), like the "Плеер + чат" mockup.
+               Dark scrims top and bottom carry the text, so the black outlines are dropped.
+               Bottom: progress, then one row with the round pause on the left and the
+               Play_ControlsMain buttons (PlayEtc.js), follow at the right end.
+               ========================================================== */
+            #scene_channel_panel,
+            .playsideinfo,
+            .playclock {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #scene_channel_panel .strokedeline,
+            #scene_channel_panel .strokedelinebig {
+                text-shadow: none;
+            }
+
+            #scene_channel_panel .shadow_text {
+                filter: none;
+            }
+
+            .player_svg {
+                width: 2.8vh;
+                height: 2.8vh;
+                display: block;
+            }
+
+            .player_svg_inline {
+                display: inline-block;
+                width: 2.4vh;
+                height: 2.4vh;
+                vertical-align: middle;
+                color: var(--tv-text-2);
+            }
+
+            /* Play / pause flash in the middle of the video: pops in, fades out when the class goes */
+            .play_flash {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                z-index: 101;
+                width: 14vh;
+                height: 14vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background-color: rgba(8, 8, 10, 0.62);
+                color: #ffffff;
+                pointer-events: none;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.85);
+                transition:
+                    opacity 300ms cubic-bezier(0.4, 0, 1, 1) 0s,
+                    transform 300ms cubic-bezier(0.4, 0, 1, 1) 0s;
+            }
+
+            .play_flash_show {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                transition:
+                    opacity 120ms cubic-bezier(0, 0, 0.2, 1) 0s,
+                    transform 260ms cubic-bezier(0.16, 1.3, 0.3, 1) 0s;
+            }
+
+            .play_flash .player_svg {
+                width: 6vh;
+                height: 6vh;
+            }
+
+            /* Top: channel, title, stats */
+            .playerinfo {
+                padding-bottom: 8vh;
+                background: linear-gradient(180deg, rgba(8, 8, 10, 0.94) 0%, rgba(8, 8, 10, 0.78) 50%, rgba(8, 8, 10, 0) 100%);
+            }
+
+            #stream_info {
+                display: flex;
+                align-items: flex-start;
+                gap: 2.4vh;
+                /* the right side stays free for the clock and the player status card */
+                padding: 4.4vh 34vw 0 4vh;
+            }
+
+            img.stream_info_icon {
+                width: 8.8vh;
+                height: 8.8vh;
+                margin: 0;
+                flex-shrink: 0;
+                border-radius: 50%;
+                object-fit: cover;
+                box-shadow: 0 0 0 0.3vh rgba(255, 255, 255, 0.12);
+            }
+
+            .playmaininfo {
+                flex: 1;
+                min-width: 0;
+                width: auto;
+                padding: 0.4vh 0 0;
+                font-size: 1.9vh;
+                line-height: 1.35;
+                color: var(--tv-text-2);
+                text-shadow: none;
+            }
+
+            /* the name row carries an inline font-size: 155% */
+            .playmaininfo > div:first-child {
+                font-size: 1.9vh !important;
+            }
+
+            #stream_info_name {
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3.6vh;
+                line-height: 1.15;
+                color: var(--tv-text);
+            }
+
+            #stream_info_title {
+                margin-top: 0.8vh;
+                font-weight: 600;
+                font-size: 2.1vh;
+                color: var(--tv-text);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            #stream_info_game {
+                margin-top: 0.6vh;
+                font-weight: 600;
+                color: var(--tv-muted);
+            }
+
+            #scene_channel_panel .stream_info_timers {
+                font-weight: 600;
+                color: var(--tv-muted);
+            }
+
+            #stream_info .partnericon_text {
+                padding: 0.3vh 0.9vh;
+                border-radius: 0.6vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 800;
+                font-size: 1.4vh;
+                letter-spacing: 0.06em;
+                vertical-align: middle;
+                transform: none;
+            }
+
+            #stream_info .lang_text {
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+                vertical-align: middle;
+                transform: none;
+            }
+
+            #stream_info img.partnericon_img {
+                width: 2.6vh;
+                vertical-align: middle;
+                transform: none;
+            }
+
+            .playclock {
+                top: 4.6vh;
+                right: 4vh;
+                left: auto;
+                width: auto;
+                text-align: right;
+                font-weight: 600;
+                font-size: 2vh;
+                color: var(--tv-text-2);
+                text-shadow: none;
+            }
+
+            /* Player status (settings), a card under the clock */
+            .playsideinfo {
+                top: 9vh;
+                right: 4vh;
+                width: auto;
+                max-width: 52ch;
+                padding: 1.6vh 2vh;
+                border-radius: 1.6vh;
+                border: 1px solid var(--tv-line);
+                background-color: rgba(21, 21, 27, 0.85);
+                font-weight: 500;
+                font-size: 1.6vh;
+                color: var(--tv-text-2);
+                text-shadow: none;
+            }
+
+            .playsideinfostatus {
+                line-height: 1.55;
+            }
+
+            /* Bottom row: pause sits at left 4vh, the buttons start after it */
+            .controls_holder {
+                display: flex;
+                align-items: center;
+                gap: 2vh;
+                box-sizing: border-box;
+                padding: 22vh 4vh 3.6vh 16.4vh;
+                text-align: left;
+                background: linear-gradient(0deg, rgba(8, 8, 10, 0.95) 0%, rgba(8, 8, 10, 0.82) 40%, rgba(8, 8, 10, 0) 100%);
+            }
+
+            .controls_button_holder {
+                position: relative;
+                width: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .controls_button_holder_end {
+                margin-left: auto;
+            }
+
+            .controls_button.controls_button {
+                width: 6.4vh;
+                height: 6.4vh;
+                padding: 0;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: var(--tv-text);
+            }
+
+            .controls_button_icon {
+                display: flex;
+            }
+
+            /* Name of the focused button: a tooltip above it, JS toggles its opacity */
+            .controls_text_title_holder {
+                position: absolute;
+                left: 50%;
+                bottom: calc(100% + 1.6vh);
+                transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.3vh;
+                padding: 0.9vh 1.6vh;
+                border-radius: 1.2vh;
+                border: 1px solid var(--tv-line);
+                background-color: rgba(21, 21, 27, 0.94);
+                white-space: nowrap;
+                pointer-events: none;
+                font-size: 1.8vh;
+            }
+
+            .controls_button_title {
+                position: static;
+                left: auto;
+                width: auto;
+                height: auto;
+                transform: none;
+                font-weight: 700;
+                font-size: 1.8vh;
+                color: var(--tv-text);
+            }
+
+            .controls_button_title + .controls_button_title {
+                font-weight: 600;
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+            }
+
+            /* Player info badge next to the channel name: live red, video and clip quiet (Play_SetInfoBadge) */
+            .stream_info_badge {
+                display: inline-block;
+                margin-left: 1.4vh;
+                padding: 0.5vh 1.1vh;
+                border-radius: 0.8vh;
+                vertical-align: middle;
+                background-color: var(--tv-card);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.5vh;
+                line-height: 1.2;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                text-shadow: none;
+                color: var(--tv-text);
+            }
+
+            .stream_info_badge:empty {
+                display: none;
+            }
+
+            .stream_info_badge_0 {
+                background-color: var(--tv-live);
+                color: #ffffff;
+            }
+
+            /* VOD and clip seeking: the preview frame and its time like the design, a light ring and a light chip */
+            .seek_previews {
+                border-radius: 1vh;
+                box-shadow: 0 0 0 0.3vh var(--tv-text);
+                overflow: hidden;
+            }
+
+            .seek_previews_text {
+                padding: 0.4vh 1vh;
+                border-radius: 0.6vh;
+                background-color: var(--tv-text);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                text-shadow: none;
+                color: var(--tv-bg);
+            }
+
+            /* Multistream and picture in picture info (stream_info_multi, _multi_big, _pp): one dark card per window
+               with a round avatar, the name, title, game and timers; the video tiles themselves are native */
+            #stream_info_multi,
+            #stream_info_multi_big,
+            #stream_info_pp {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #stream_info_multi .side_panel_div,
+            #stream_info_multi_big .side_panel_div,
+            #stream_info_pp .side_panel_div {
+                margin: 0 1.2vh 1.2vh 0;
+                padding: 1.2vh 1.4vh;
+                box-sizing: border-box;
+                border: 1px solid var(--tv-line) !important;
+                border-radius: 1.8vh;
+                background-color: rgba(15, 15, 19, 0.86) !important;
+                box-shadow: 0 1.6vh 4vh rgba(0, 0, 0, 0.45);
+            }
+
+            #stream_info_multi .side_panel_iner_div1,
+            #stream_info_multi_big .side_panel_iner_div1,
+            #stream_info_pp .side_panel_iner_div1_pp {
+                padding-left: 0;
+                vertical-align: top;
+            }
+
+            #stream_info_multi .side_panel_iner_div1 img,
+            #stream_info_multi_big .side_panel_iner_div1 img,
+            #stream_info_pp .side_panel_iner_div1_pp img {
+                border-radius: 50%;
+            }
+
+            #stream_info_multi .side_panel_new_title,
+            #stream_info_multi_big .side_panel_new_title,
+            #stream_info_pp .side_panel_new_title {
+                font-weight: 700;
+                color: var(--tv-text);
+                text-shadow: none;
+            }
+
+            #stream_info_multi .side_panel_new_game,
+            #stream_info_multi_big .side_panel_new_game,
+            #stream_info_pp .side_panel_new_game {
+                font-weight: 500;
+                color: var(--tv-text-2);
+                text-shadow: none;
+            }
+
+            #stream_info_multi .stream_info_timers,
+            #stream_info_multi_big .stream_info_timers,
+            #stream_info_pp .stream_info_timers {
+                font-weight: 600;
+                color: var(--tv-muted);
+            }
+
+            /* volume icon of each window (Play_GetAudioIcon) in the accent color */
+            #stream_info_multi .audio_icon .player_svg_inline,
+            #stream_info_multi_big .audio_icon .player_svg_inline,
+            #stream_info_pp .audio_icon .player_svg_inline {
+                color: var(--tv-accent-ink);
+            }
+
+            /* Quality picker (Play_QualityList): the tooltip becomes the panel of the design, a kicker, the title and
+               one row per quality; it opens from the left edge of the button so it stays on screen */
+            .controls_text_title_holder.controls_has_list {
+                left: 0;
+                transform: none;
+                align-items: stretch;
+                gap: 0.8vh;
+                width: 46vh;
+                padding: 2.6vh 2.6vh 2.2vh;
+                border-radius: 2.2vh;
+                background-color: var(--tv-panel);
+                box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.6);
+                white-space: normal;
+            }
+
+            .controls_has_list::before {
+                content: attr(data-kicker);
+                font-weight: 700;
+                font-size: 1.6vh;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--tv-accent-ink);
+            }
+
+            .controls_has_list .controls_button_title:first-child {
+                margin-bottom: 1vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-size: 2.8vh;
+            }
+
+            /* the old "arrows + value" line, the list replaces it */
+            .controls_has_list .controls_button_title + .controls_button_title {
+                display: none;
+            }
+
+            .controls_list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.7vh;
+            }
+
+            .controls_list_item {
+                display: flex;
+                align-items: center;
+                gap: 1.4vh;
+                height: 5.4vh;
+                padding: 0 1.8vh;
+                border-radius: 1.4vh;
+                background-color: var(--tv-surface);
+            }
+
+            .controls_list_label {
+                flex-grow: 1;
+                font-weight: 600;
+                font-size: 2vh;
+                color: var(--tv-text);
+            }
+
+            .controls_list_hint {
+                font-weight: 600;
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+            }
+
+            .controls_list_playing .controls_list_label::after {
+                content: '';
+                display: inline-block;
+                width: 0.9vh;
+                height: 0.9vh;
+                margin-left: 1.2vh;
+                border-radius: 50%;
+                vertical-align: middle;
+                background-color: var(--tv-live);
+            }
+
+            .controls_list_item.controls_list_focus {
+                background-color: var(--tv-accent);
+            }
+
+            .controls_list_focus .controls_list_label {
+                font-weight: 700;
+                color: #ffffff;
+            }
+
+            .controls_list_focus .controls_list_hint {
+                color: rgba(255, 255, 255, 0.85);
+            }
+
+            /* Progress above the row; the pause row is taken out of the flow and dropped into the button row:
+               holder bottom 17.5vh - 6.5vh = top of the 8.4vh pause, centered on the 6.4vh buttons */
+            .progress_pause_holder {
+                bottom: 17.5vh;
+            }
+
+            .pause_next_div {
+                position: absolute;
+                top: calc(100% + 6.5vh);
+                left: 0;
+                right: 0;
+                width: auto;
+                margin-left: 0;
+                pointer-events: none;
+            }
+
+            #pause_button_holder {
+                position: absolute;
+                left: 4vh;
+                top: 0;
+                width: auto !important;
+                margin: 0 !important;
+                pointer-events: auto;
+            }
+
+            #pause_button {
+                width: 8.4vh !important;
+                height: 8.4vh;
+                padding: 0 !important;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 50% !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(255, 255, 255, 0.14);
+                color: var(--tv-text);
+            }
+
+            #pause_button .player_svg {
+                width: 3.2vh;
+                height: 3.2vh;
+            }
+
+            /* Progress like the VOD mockup: full width track, big white knob, times under the bar.
+               PlayVod.js moves the played part (and the buffer) with translate(x%, -27%) inside
+               .inner_progress_animate_holder, which clips it; the track is drawn behind as ::before. */
+            .progress_bar_div.progress_bar_div,
+            .progress_bar_div.progress_bar_div_focus {
+                width: auto;
+                height: auto;
+                margin: 0 4vh;
+                padding: 0.4vh 1.2vh 0.8vh;
+                border-radius: 1.6vh;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .progress_bar_div.progress_bar_div_focus {
+                background-color: rgba(21, 21, 27, 0.6) !important;
+            }
+
+            #progress_bar_holder {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            /* the bar first on its own line, then the two times */
+            #progress_bar {
+                order: -1;
+                flex-basis: 100%;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .progress_bar_timer {
+                width: auto;
+                margin-top: 0.4vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.7vh;
+                color: var(--tv-text-2);
+            }
+
+            .progress_bar.progress_bar {
+                border: 0;
+                background-color: transparent;
+            }
+
+            .inner_progress_animate_holder {
+                position: relative;
+                height: 3.4vh;
+                width: 100%;
+                transform: none;
+                border-radius: 0;
+            }
+
+            .inner_progress_animate_holder::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 50%;
+                height: 1vh;
+                margin-top: -0.5vh;
+                border-radius: 1vh;
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            /* played part and buffer, their colors and offsets are inline in index.html */
+            #inner_progress_bar,
+            #inner_progress_bar_buffer {
+                position: absolute;
+                left: 0;
+                top: 50%;
+                bottom: auto !important;
+                width: 100%;
+                height: 1vh !important;
+                margin-top: -0.25vh;
+                border: 0 !important;
+                border-radius: 1vh !important;
+            }
+
+            #inner_progress_bar {
+                background-color: var(--tv-accent) !important;
+            }
+
+            #inner_progress_bar_buffer {
+                background-color: rgba(255, 255, 255, 0.28) !important;
+            }
+
+            /* knob on the right end of the played part */
+            .inner_progress_circle {
+                top: 50%;
+                right: 0;
+                width: 2.2vh;
+                height: 2.2vh;
+                border: 0;
+                border-radius: 50%;
+                background-color: #ffffff;
+                box-shadow: 0 0 0 0.4vh var(--tv-accent);
+                transform: translate(50%, -50%);
+                transition: transform 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .progress_bar_div_focus .inner_progress_circle {
+                transform: translate(50%, -50%) scale(1.25);
+            }
+
+            /* Home: section title above the followed live rows, lined up with the first card
+               (table margin 4.6% + card padding about 0.5%) */
+            .home_section_title {
+                margin-left: 7.1%;
+                padding-bottom: 1.8vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 2.6vh;
+                letter-spacing: -0.01em;
+                -webkit-text-stroke: 0;
+                color: var(--tv-text);
+            }
+
+            /* Home: the featured block continues the followed grid (ScreensObj_HomeStartSection); its rows are
+               pushed down to leave room for the block title, drawn by the first of them */
+            .home_row_featured {
+                margin-top: 6.5vh;
+            }
+
+            .home_row_section::before {
+                content: attr(data-title);
+                position: absolute;
+                left: 0.55%;
+                top: -5vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 2.6vh;
+                letter-spacing: -0.01em;
+                -webkit-text-stroke: 0;
+                color: var(--tv-text);
+                white-space: nowrap;
+            }
+
+            /* Search and password screens (Search.js, Password.js): a dark field with the accent ring on focus and
+               chips below it; the box is centered on the content area right of the rail */
+            .input_text_box {
+                width: 60%;
+                margin: 0 0 0 23%;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+            }
+
+            .search_box {
+                margin-top: 20vh;
+            }
+
+            #password_ {
+                margin-top: 18vh !important;
+            }
+
+            .search_title {
+                margin: 0 0 3.2vh 0.4vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 4.4vh;
+                letter-spacing: -0.02em;
+                color: var(--tv-text);
+            }
+
+            .search_field {
+                position: relative;
+            }
+
+            .search_field svg {
+                position: absolute;
+                left: 2.8vh;
+                top: 50%;
+                width: 3.4vh;
+                height: 3.4vh;
+                transform: translateY(-50%);
+                color: var(--tv-icon);
+                pointer-events: none;
+                transition: color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .search_field:focus-within svg {
+                color: var(--tv-accent-ink);
+            }
+
+            .input_class {
+                display: block;
+                box-sizing: border-box;
+                height: 9vh;
+                padding: 0 3vh;
+                border: 0.3vh solid var(--tv-line);
+                border-radius: 2.2vh;
+                background-color: var(--tv-surface);
+                box-shadow: none;
+                color: var(--tv-text);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 3.2vh;
+                text-align: left;
+                transition:
+                    border-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    box-shadow 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .search_field .input_class {
+                padding-left: 8.4vh;
+            }
+
+            .input_class::placeholder {
+                color: var(--tv-muted);
+                font-weight: 500;
+            }
+
+            .input_class:focus {
+                border-color: var(--tv-accent);
+                box-shadow: 0 0 0 0.6vh var(--tv-accent-tint);
+            }
+
+            .input_text_box .button_search_container {
+                width: 100%;
+                gap: 1.6vh;
+                margin-top: 3vh;
+            }
+
+            .input_text_box .button_search {
+                flex: 1 1 0;
+                width: auto;
+                height: 7vh;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1.2vh;
+                box-sizing: border-box;
+                border: 0.25vh solid var(--tv-line);
+                border-image: none;
+                border-radius: 1.8vh;
+                background-color: var(--tv-panel);
+                color: var(--tv-text-2);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 2.3vh;
+                line-height: 1;
+                text-shadow: none;
+                white-space: nowrap;
+                transition:
+                    background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    transform 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .input_text_box .button_search svg {
+                width: 2.6vh;
+                height: 2.6vh;
+                flex-shrink: 0;
+                color: var(--tv-icon);
+            }
+
+            .input_text_box .button_search > * {
+                pointer-events: none;
+            }
+
+            .input_text_box .button_search:hover {
+                background-color: var(--tv-surface);
+                text-shadow: none;
+                border-image: none;
+            }
+
+            .input_text_box .button_search.button_search_focused {
+                text-shadow: none;
+                border-image: none;
+                transform: scale(1.04);
+            }
+
+            .input_text_box .button_search.button_search_focused svg {
+                color: #ffffff;
+            }
+
+            /* Settings (Settings.js): every option is a card, name and hint on the left, value between the arrows
+               on the right. The main page has roomy cards, the option dialogs a compact version of the same card.
+               Settings_ScrollTable keeps the focused card in the middle of the page. */
+            /* Page layout like the design: sections on a panel at the left (after the rail), options at the right.
+               settings_nav_focus on the holder tells where the remote is. */
+            .settings_nav {
+                position: absolute;
+                top: 1.4vh;
+                bottom: 2.4vh;
+                left: 6.2%;
+                width: 24%;
+                box-sizing: border-box;
+                padding: 2.4vh 1.8vh;
+                border: 1px solid var(--tv-line-soft);
+                border-radius: 2.4vh;
+                background-color: var(--tv-panel);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+            }
+
+            .settings_nav_item {
+                display: flex;
+                flex-direction: column;
+                gap: 0.4vh;
+                margin-bottom: 0.9vh;
+                padding: 1.7vh 2vh;
+                border-radius: 1.6vh;
+                transition:
+                    background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .settings_nav_label {
+                font-weight: 600;
+                font-size: 2.1vh;
+                color: var(--tv-text);
+            }
+
+            .settings_nav_hint {
+                font-weight: 500;
+                font-size: 1.55vh;
+                color: var(--tv-muted);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* the shown section while the options have the remote */
+            .settings_nav_active {
+                background-color: var(--tv-surface);
+                box-shadow: inset 0.5vh 0 0 var(--tv-accent);
+            }
+
+            .settings_nav_active .settings_nav_label {
+                font-weight: 700;
+            }
+
+            /* the focused section while the list has the remote: the light pill of the design */
+            .settings_nav_focus .settings_nav_active {
+                background-color: var(--tv-text);
+                box-shadow: none;
+            }
+
+            .settings_nav_focus .settings_nav_active .settings_nav_label {
+                color: var(--tv-bg);
+            }
+
+            .settings_nav_focus .settings_nav_active .settings_nav_hint {
+                color: #4a4857;
+            }
+
+            .screen_holder_settings {
+                margin-left: 32.6%;
+                width: 63.4%;
+            }
+
+            .settings_group_kicker {
+                margin: 1.6vh 0 0.6vh 0.4vh;
+                font-weight: 700;
+                font-size: 1.7vh;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--tv-accent-ink);
+            }
+
+            .settings_group_title {
+                margin: 0 0 2.4vh 0.4vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3.8vh;
+                letter-spacing: -0.01em;
+                color: var(--tv-text);
+            }
+
+            .settings_main {
+                width: 100%;
+                margin: 0;
+                padding: 1.2vh 1vh 6vh;
+                box-sizing: border-box;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+                color: var(--tv-text);
+            }
+
+            .settings_div {
+                display: flex;
+                align-items: center;
+                gap: 0.6vh;
+                width: 100%;
+                min-height: 7.8vh;
+                margin-bottom: 1.3vh;
+                padding: 1.2vh 1.6vh 1.2vh 2.6vh;
+                box-sizing: border-box;
+                border: 0;
+                border-image: none;
+                border-radius: 1.7vh;
+                background-color: #16161c;
+                font-size: 2.4vh;
+                line-height: 1.25;
+                text-align: left;
+                transition: background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .settings_div .settings_name {
+                flex: 1 1 auto;
+                min-width: 0;
+                width: auto;
+                margin: 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 2.15vh;
+                line-height: 1.25;
+                color: var(--tv-text);
+            }
+
+            .settings_div.settings_div_focus .settings_name {
+                font-weight: 700;
+            }
+
+            .settings_div .settings_summary {
+                display: block;
+                width: auto;
+                margin: 0.5vh 0 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 500;
+                font-size: 1.65vh !important;
+                line-height: 1.4;
+                color: var(--tv-muted);
+            }
+
+            .settings_div .settings_arraw_div {
+                flex: 0 0 auto;
+                width: auto;
+                padding: 0 0.6vh;
+                font-size: 2.6vh;
+                line-height: 0;
+            }
+
+            .settings_div .settings_value {
+                flex: 0 0 auto;
+                width: 26vh;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                border-image: none;
+                background-color: transparent;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 2.1vh;
+                line-height: 1.3;
+                text-align: center;
+                text-shadow: none;
+                color: var(--tv-text-2);
+            }
+
+            .settings_div.settings_div_focus {
+                background-color: var(--tv-surface);
+                box-shadow: 0 0 0 0.4vh var(--tv-accent);
+            }
+
+            .settings_div.settings_div_focus .settings_value {
+                font-weight: 700;
+                color: var(--tv-accent-ink);
+            }
+
+            .settings_div.settings_div_focus .settings_summary {
+                color: var(--tv-text-2);
+            }
+
+            .settings_main .settings_section {
+                display: block;
+                width: auto;
+                margin: 4.4vh 0 1.8vh 0.6vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3.2vh;
+                letter-spacing: -0.01em;
+                text-align: left;
+                color: var(--tv-text);
+            }
+
+            /* Option dialogs (Settings_DialogShow, codecs): the same card, smaller */
+            .about_dialogs .settings_div {
+                min-height: 5.2vh;
+                margin-bottom: 0.6vh;
+                padding: 0.8vh 1.2vh 0.8vh 2vh;
+                border-radius: 1.3vh;
+                background-color: var(--tv-bg);
+            }
+
+            .about_dialogs .settings_div .settings_name {
+                font-size: 1.95vh;
+            }
+
+            .about_dialogs .settings_div .settings_summary {
+                margin-top: 0.3vh;
+                font-size: 1.45vh !important;
+            }
+
+            .about_dialogs .settings_div .settings_value {
+                width: 22vh;
+                font-size: 1.8vh;
+            }
+
+            .about_dialogs .settings_div .settings_arraw_div {
+                font-size: 2.2vh;
+            }
+
+            .about_dialogs .settings_div.settings_div_focus {
+                background-color: var(--tv-surface);
+                box-shadow: inset 0 0 0 0.35vh var(--tv-accent);
+            }
+
+            /* Dialog boxes: panel color, round corners, a hairline and a deep shadow */
+            .about_dialogs {
+                box-sizing: border-box;
+                padding: 2.4vh 2.6vh;
+                border: 1px solid var(--tv-line) !important;
+                border-radius: 2.4vh;
+                background-color: var(--tv-panel);
+                box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.6);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+            }
+
+            .about_dialogs .about_text,
+            .about_dialogs .controls_text,
+            .about_dialogs .exit_text {
+                text-shadow: none;
+                color: var(--tv-text-2);
+            }
+
+            .about_dialogs .about_text_title {
+                margin-top: 1.4vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.7vh;
+                color: var(--tv-muted);
+            }
+
+            /* Exit, yes/no, period, offset and history dialogs: the same panel, they keep their own position.
+               The thumbnail options dialog has its own card (#dialog_thumb_opt .dialog_period). */
+            .dialog_period,
+            .dialog_exit {
+                box-sizing: border-box;
+                padding: 3.2vh 3.2vh 2.8vh;
+                border: 1px solid var(--tv-line);
+                border-image: none;
+                border-radius: 2.4vh;
+                background-color: var(--tv-panel);
+                box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.6);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+                animation: tv_dialog_rise 220ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+            }
+
+            @keyframes tv_dialog_rise {
+                from {
+                    opacity: 0;
+                    transform: translateY(1.6vh) scale(0.98);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+
+            .dialog_period .exit_text,
+            .dialog_exit .exit_text {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 2.3vh;
+                line-height: 1.45;
+                text-shadow: none;
+                color: var(--tv-text);
+            }
+
+            #dialog_OffSet_val {
+                width: 30vh;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 2.6vh;
+                text-shadow: none;
+                border: 0;
+                border-image: none;
+                background-color: transparent;
+                color: var(--tv-accent-ink);
+            }
+
+            /* Dialog buttons: pills, the focused one is the accent (theme rule above) */
+            .button_dialog {
+                height: 6vh;
+                line-height: 6vh;
+                margin-top: 2vh;
+                border: 0.25vh solid var(--tv-line);
+                border-image: none;
+                border-radius: 1.6vh;
+                background-color: var(--tv-surface);
+                color: var(--tv-text-2);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 2.2vh;
+                text-shadow: none;
+            }
+
+            .button_dialog:hover,
+            .button_dialog.button_dialog_focused {
+                text-shadow: none;
+                border-image: none;
+            }
+
+            /* Switch pills: the top row of the game, channel, VOD and clip screens (ScreensObj_addSwitches) and of the
+               channel page, an SVG icon and a label (ScreensObj_SwitchLabel), the focused one is the accent */
+            .stream_cell_period {
+                width: auto;
+                /* room for the focus scale and a gap before the first row of cards */
+                padding: 0.6vh 1.2vh 2.6vh 0;
+                transform: none;
+                vertical-align: top;
+                letter-spacing: normal;
+            }
+
+            .stream_thumbnail_channel_vod {
+                display: flex;
+                align-items: center;
+                width: auto;
+                height: 5.4vh;
+                margin: 0;
+                padding: 0 2.6vh 0 2.2vh;
+                box-sizing: border-box;
+                border: 0.25vh solid var(--tv-line) !important;
+                border-radius: 1.8vh;
+                background-color: var(--tv-surface);
+                transition:
+                    background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    transform 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .stream_channel_follow_game {
+                display: flex;
+                align-items: center;
+                gap: 1.1vh;
+                width: auto;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.9vh;
+                line-height: 1;
+                letter-spacing: normal;
+                white-space: nowrap;
+                text-align: left;
+                text-shadow: none;
+                -webkit-text-stroke: 0;
+                color: var(--tv-text-2);
+                transform: none;
+            }
+
+            .switch_icon {
+                display: flex;
+                color: var(--tv-icon);
+            }
+
+            .switch_icon svg {
+                width: 2.6vh;
+                height: 2.6vh;
+            }
+
+            .switch_icon_on {
+                color: var(--tv-accent-ink);
+            }
+
+            .switch_icon_on svg {
+                fill: currentColor;
+            }
+
+            .stream_thumbnail_channel_vod.stream_switch_focused {
+                border-color: var(--tv-accent) !important;
+                background-color: var(--tv-accent);
+                transform: scale(1.04);
+            }
+
+            .stream_switch_focused .stream_channel_follow_game,
+            .stream_switch_focused .switch_icon {
+                color: #ffffff;
+            }
+
+            /* Channel page (ChannelContent.js): the channel banner fades in behind the top, pills, then the avatar,
+               the live (or offline) card and the about panel side by side */
+            #stream_table_channel_content {
+                position: relative;
+                z-index: 0;
+            }
+
+            #channel_content_img0_1 {
+                position: absolute;
+                z-index: -1;
+                top: -4vh;
+                left: -1%;
+                right: 0;
+                height: 44vh;
+                overflow: hidden;
+                border-radius: 2.4vh;
+                opacity: 0.4;
+                -webkit-mask-image: linear-gradient(to bottom, #000000 15%, transparent 100%);
+                mask-image: linear-gradient(to bottom, #000000 15%, transparent 100%);
+                pointer-events: none;
+            }
+
+            #channel_content_img0_1 img.stream_img_channel {
+                position: static;
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                max-height: none;
+                margin: 0;
+                transform: none;
+                object-fit: cover;
+                border-radius: 0;
+            }
+
+            /* the holder (.screen_holder_switch) already starts under the top bar */
+            #stream_table_channel_content > div:first-child {
+                padding: 0 0 0 0.5%;
+            }
+
+            #channel_content_row0 {
+                display: flex;
+                align-items: flex-start;
+                gap: 3vh;
+                margin-top: 2vh;
+                padding-left: 0.5%;
+            }
+
+            #channel_content_row0 > .stream_thumbnail_live_holder {
+                padding: 0;
+            }
+
+            /* avatar */
+            #channel_content_row0 > .stream_thumbnail_live_holder:first-child {
+                flex: 0 0 15%;
+                width: 15%;
+            }
+
+            #channel_content_row0 > .stream_thumbnail_live_holder:first-child .stream_thumbnail_live {
+                position: relative;
+                padding-bottom: 100%;
+            }
+
+            #channel_content_thumbdiv0_1 {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                border-radius: 50% !important;
+                box-shadow:
+                    0 0 0 0.6vh var(--tv-bg),
+                    0 2vh 5vh rgba(0, 0, 0, 0.5);
+            }
+
+            #channel_content_thumbdiv0_1 img.stream_img_channel_logo {
+                left: 0;
+                width: 100%;
+                height: 100%;
+                transform: none;
+                object-fit: cover;
+            }
+
+            /* live or offline card */
+            #channel_content_cell0_1 {
+                flex: 0 0 40%;
+                width: 40%;
+            }
+
+            #channel_content_cell0_1 .stream_thumbnail_live_text_holder .stream_info_live_name {
+                font-size: 2.4vh;
+            }
+
+            #channel_content_cell0_1 .stream_thumbnail_live_text_holder .stream_info_live_title {
+                font-size: 1.9vh;
+            }
+
+            #channel_content_cell0_1 .stream_thumbnail_live_text_holder .stream_info_live {
+                font-size: 1.65vh;
+            }
+
+            /* about panel, its content is built by ChannelContent_loadDataSuccess */
+            #channel_content_row0 > .stream_thumbnail_live_holder:last-child {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            #channel_content_row0 > .stream_thumbnail_live_holder:last-child .stream_thumbnail_live {
+                padding-bottom: 0;
+            }
+
+            #channel_content_infodiv0_1 {
+                position: static;
+                height: auto !important;
+                max-height: 52vh;
+                width: auto;
+                margin: 0;
+                padding: 2.8vh 3vh;
+                box-sizing: border-box;
+                overflow: hidden;
+                border: 1px solid var(--tv-line-soft);
+                border-radius: 2.2vh;
+                background-color: rgba(21, 21, 27, 0.92);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-size: 1.75vh;
+                line-height: 1.5;
+                color: var(--tv-text-2);
+            }
+
+            .channel_about_name {
+                display: flex;
+                align-items: center;
+                gap: 1.2vh;
+                margin-bottom: 1vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 4vh;
+                line-height: 1.1;
+                letter-spacing: -0.02em;
+                color: var(--tv-text);
+            }
+
+            .channel_about_partner {
+                width: 2.6vh;
+                height: 2.6vh;
+            }
+
+            .channel_about_meta {
+                font-weight: 600;
+                font-size: 1.85vh;
+                color: var(--tv-muted);
+            }
+
+            .channel_about_label {
+                margin: 2.4vh 0 0.8vh;
+                font-weight: 700;
+                font-size: 1.6vh;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--tv-accent-ink);
+            }
+
+            .channel_about_text {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 9;
+                overflow: hidden;
+                word-wrap: break-word;
+            }
+
+            /* Sign in (AddUser.js, Twitch device code): a centered card with the steps, the site as a pill, the code one
+               box per character and the check status at the bottom. .hide still wins, hence :not(.hide). */
+            .activate_box {
+                width: 64vh;
+                margin: 13vh 0 0 calc(50% - 32vh + 3%);
+            }
+
+            .activate_card:not(.hide) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-sizing: border-box;
+                padding: 4.4vh 4.4vh 3.4vh;
+                border: 1px solid var(--tv-line);
+                border-radius: 2.8vh;
+                background-color: var(--tv-panel);
+                box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.55);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+                animation: tv_dialog_rise 260ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+            }
+
+            #add_user_text.add_user_text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100% !important;
+                font-size: 2vh;
+                color: var(--tv-text-2);
+            }
+
+            .activate_icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 8vh;
+                height: 8vh;
+                margin-bottom: 2.2vh;
+                border-radius: 2.2vh;
+                background-color: var(--tv-accent);
+                color: #ffffff;
+            }
+
+            .activate_icon svg {
+                width: 4vh;
+                height: 4vh;
+            }
+
+            .activate_title {
+                margin-bottom: 2.4vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3.6vh;
+                letter-spacing: -0.02em;
+                color: var(--tv-text);
+            }
+
+            .activate_text {
+                font-weight: 500;
+                font-size: 2.1vh;
+                line-height: 1.45;
+                text-align: center;
+                color: var(--tv-text-2);
+            }
+
+            .activate_url {
+                margin: 1.2vh 0 1.4vh;
+                padding: 1vh 2.2vh;
+                border-radius: 999px;
+                background-color: var(--tv-accent-tint);
+                font-weight: 700;
+                font-size: 2.6vh;
+                color: var(--tv-accent-ink);
+            }
+
+            .activate_url a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .activate_code {
+                display: flex;
+                align-items: center;
+                gap: 1vh;
+                margin: 2.6vh 0 0.6vh;
+            }
+
+            .activate_code span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 5.6vh;
+                height: 7.2vh;
+                border: 0.25vh solid var(--tv-line);
+                border-radius: 1.4vh;
+                background-color: var(--tv-bg);
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 4vh;
+                color: var(--tv-text);
+            }
+
+            .activate_code span.activate_code_dash {
+                width: 1.6vh;
+                height: 0.4vh;
+                border: 0;
+                border-radius: 0.2vh;
+                background-color: var(--tv-line);
+            }
+
+            .activate_status {
+                display: flex;
+                align-items: center;
+                gap: 1.2vh;
+                margin-top: 3.2vh;
+                padding: 1.1vh 2vh;
+                border-radius: 999px;
+                background-color: var(--tv-surface);
+                font-weight: 600;
+                font-size: 1.75vh;
+                color: var(--tv-muted);
+            }
+
+            .activate_status_dot {
+                width: 1vh;
+                height: 1vh;
+                border-radius: 50%;
+                background-color: var(--tv-accent);
+                animation: activate_pulse 1.4s ease-in-out infinite;
+            }
+
+            @keyframes activate_pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+
+                50% {
+                    opacity: 0.35;
+                    transform: scale(0.7);
+                }
+            }
+
+            /* Password screen help text above the field */
+            #password_help {
+                margin-bottom: 2.4vh;
+                font-weight: 600;
+                font-size: 2.2vh;
+                line-height: 1.45;
+                color: var(--tv-text-2);
+                text-shadow: none;
+                text-align: left;
+            }
+
+            /* Account screen (Users.js): round avatar with the focus ring (SettingsColor.js), name centered below,
+               the first card adds an account */
+            #stream_table_user .stream_thumbnail_user {
+                background-color: transparent !important;
+            }
+
+            #stream_table_user .stream_thumbnail_channel_img {
+                width: 76%;
+                padding-bottom: 76%;
+                margin: 6% auto 0;
+                overflow: hidden;
+                border-radius: 50%;
+                background-color: var(--tv-card);
+            }
+
+            #stream_table_user img.stream_img_channels {
+                width: 100%;
+                height: 100%;
+                max-height: none;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+
+            #stream_table_user .user_add_circle {
+                box-sizing: border-box;
+                border: 0.3vh dashed rgba(255, 255, 255, 0.28);
+                /* the theme layer paints thumbnail placeholders with !important */
+                background-color: transparent !important;
+                color: var(--tv-muted);
+                transition:
+                    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                    color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            #stream_table_user .user_add_circle svg {
+                position: absolute;
+                top: 30%;
+                left: 30%;
+                width: 40%;
+                height: 40%;
+                pointer-events: none;
+            }
+
+            #stream_table_user .stream_thumbnail_focused .user_add_circle,
+            #stream_table_user .stream_thumbnail_focused_no_ani .user_add_circle {
+                border-color: transparent;
+                background-color: var(--tv-accent-tint) !important;
+                color: var(--tv-accent-ink);
+            }
+
+            #stream_table_user .stream_thumbnail_user_text_holder {
+                height: auto;
+                padding: 0;
+                bottom: 4%;
+                text-align: center;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #stream_table_user .stream_info_user_name {
+                width: 100%;
+                padding: 0;
+                text-align: center;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 2vh;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            /* Thumbnail options dialog (hold left on a card): a centered card over a dimmed screen.
+               It is shown by removing .hide, so the entrance is a CSS animation that runs on display. */
+            #dialog_thumb_opt {
+                background: rgba(8, 8, 10, 0.72) !important;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #dialog_thumb_opt .dialog_period {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 64vw;
+                margin: 0;
+                box-sizing: border-box;
+                padding: 4vh 4vh 3vh;
+                border-radius: 2.4vh;
+                border: 1px solid var(--tv-line);
+                background-color: var(--tv-panel);
+                box-shadow: 0 4vh 10vh rgba(0, 0, 0, 0.6);
+                text-align: left !important;
+                transform: translate(-50%, -50%);
+                animation: tv_dialog_in 260ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+            }
+
+            @keyframes tv_dialog_in {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -47%) scale(0.97);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+
+            #dialog_thumb_opt .strokedeline {
+                text-shadow: none;
+            }
+
+            #dialog_opt_text {
+                width: auto;
+                margin: 0 0 2.4vh 1.6vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3vh;
+                color: var(--tv-text);
+            }
+
+            #dialog_thumb_opt .hist_div {
+                display: flex;
+                align-items: center;
+                gap: 1vh;
+                width: 100%;
+                height: 5.4vh;
+                margin: 0.4vh 0;
+                padding: 0 1.6vh;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 1.4vh;
+                line-height: normal;
+                font-size: 2vh;
+            }
+
+            /* rows switched off for the card are hidden with .hideimp, keep that winning over display: flex */
+            #dialog_thumb_opt .hist_div.hideimp {
+                display: none;
+            }
+
+            #dialog_thumb_opt .hist_name {
+                flex: 1;
+                width: auto;
+                margin: 0;
+                font-weight: 600;
+                font-size: 2vh;
+                color: var(--tv-text-2);
+            }
+
+            #dialog_thumb_opt .hist_value {
+                width: auto;
+                min-width: 16vw;
+                margin: 0;
+                border: 0;
+                text-align: right;
+                font-weight: 600;
+                font-size: 1.9vh;
+                line-height: normal;
+                color: var(--tv-muted);
+            }
+
+            #dialog_thumb_opt .settings_div_focus .hist_name {
+                color: var(--tv-text);
+            }
+
+            #dialog_thumb_opt .settings_value_focus {
+                color: var(--tv-accent-ink);
+            }
+
+            #dialog_thumb_opt .settings_arraw_div {
+                width: auto;
+            }
+
+            #dialog_opt_text_end {
+                width: auto;
+                margin: 2.4vh 0 0;
+                padding: 2vh 1.6vh 0;
+                border-top: 1px solid var(--tv-line-soft);
+                font-weight: 500;
+                font-size: 1.6vh;
+                line-height: 1.5;
+                color: var(--tv-muted);
+            }
+
+            /* History settings dialog (sorting, delete...): the same card and rows as the thumbnail options */
+            #dialog_hist_setting {
+                background: rgba(8, 8, 10, 0.72) !important;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #dialog_hist_setting .dialog_period {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 64vw;
+                margin: 0;
+                padding: 4vh 4vh 3vh;
+                text-align: left !important;
+                transform: translate(-50%, -50%);
+                animation: tv_dialog_in 260ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+            }
+
+            #dialog_hist_setting .strokedeline {
+                text-shadow: none;
+            }
+
+            #dialog_hist_text {
+                width: auto;
+                margin: 0 0 2.4vh 1.6vh;
+                font-family: 'Space Grotesk', 'Manrope', sans-serif;
+                font-weight: 700;
+                font-size: 3vh;
+                color: var(--tv-text);
+            }
+
+            #dialog_hist_setting .hist_div {
+                display: flex;
+                align-items: center;
+                gap: 1vh;
+                width: 100%;
+                min-height: 5.4vh;
+                margin: 0.4vh 0;
+                padding: 0.6vh 1.6vh;
+                box-sizing: border-box;
+                border: 0;
+                border-image: none;
+                border-radius: 1.4vh;
+                line-height: normal;
+                font-size: 2vh;
+            }
+
+            #dialog_hist_setting .hist_name {
+                flex: 1;
+                width: auto;
+                margin: 0;
+                font-weight: 600;
+                font-size: 2vh;
+                color: var(--tv-text-2);
+            }
+
+            #dialog_hist_setting .settings_summary {
+                margin: 0.3vh 0 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 500;
+                font-size: 1.5vh !important;
+                color: var(--tv-muted);
+            }
+
+            #dialog_hist_setting .hist_value {
+                width: auto;
+                min-width: 16vw;
+                margin: 0;
+                border: 0;
+                border-image: none;
+                background-color: transparent;
+                text-align: right;
+                font-weight: 600;
+                font-size: 1.9vh;
+                line-height: normal;
+                color: var(--tv-muted);
+            }
+
+            #dialog_hist_setting .settings_div_focus .hist_name {
+                color: var(--tv-text);
+            }
+
+            #dialog_hist_setting .settings_value_focus {
+                color: var(--tv-accent-ink);
+            }
+
+            #dialog_hist_setting .settings_arraw_div {
+                width: auto;
+            }
+
+            /* Empty state (ScreensObj_addBanner with empty): a dashed card with the screen icon and the message */
+            /* inset so the focus ring (1.1vh outside the card) stays clear of the pills and the rail */
+            .banner_empty_holder {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 1.6vh 1.6vh 0;
+            }
+
+            .inner_banner_holder.banner_empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2.2vh;
+                min-height: 30vh;
+                padding: 4vh 6vh;
+                box-sizing: border-box;
+                border: 0.3vh dashed var(--tv-line) !important;
+                border-radius: 2.4vh;
+                background-color: var(--tv-panel) !important;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                -webkit-text-stroke: 0;
+                text-align: center;
+            }
+
+            .banner_empty_icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 10vh;
+                height: 10vh;
+                border-radius: 50%;
+                background-color: var(--tv-accent-tint);
+                color: var(--tv-accent-ink);
+            }
+
+            .banner_empty_icon svg {
+                width: 4.6vh;
+                height: 4.6vh;
+            }
+
+            .banner_empty_text {
+                max-width: 70vh;
+                font-weight: 600;
+                font-size: 2.2vh;
+                line-height: 1.5;
+                color: var(--tv-text-2);
+            }
+
+            .inner_banner_holder.banner_empty.stream_thumbnail_focused,
+            .inner_banner_holder.banner_empty.stream_thumbnail_focused_no_ani {
+                border-style: solid !important;
+                border-color: transparent !important;
+                background-color: var(--tv-surface) !important;
+            }
+
+            .banner_empty.stream_thumbnail_focused .banner_empty_text,
+            .banner_empty.stream_thumbnail_focused_no_ani .banner_empty_text {
+                color: var(--tv-text);
+            }
+
+            /* Channel grids (followed channels, channel search, blocked channels): round avatar with the focus ring
+               on the circle and the name centered below, like the account screen */
+            .streams_div .stream_thumbnail_channel {
+                background-color: transparent !important;
+            }
+
+            .streams_div .stream_thumbnail_channel .stream_thumbnail_channel_img {
+                width: 76%;
+                padding-bottom: 76%;
+                margin: 4% auto 0;
+                overflow: hidden;
+                border-radius: 50%;
+                background-color: var(--tv-card) !important;
+            }
+
+            .streams_div .stream_thumbnail_channel img.stream_img_channels {
+                width: 100%;
+                height: 100%;
+                max-height: none;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+
+            .streams_div .stream_thumbnail_channel.stream_thumbnail_focused,
+            .streams_div .stream_thumbnail_channel.stream_thumbnail_focused_no_ani {
+                background-color: transparent !important;
+                border-color: transparent !important;
+                box-shadow: none;
+            }
+
+            .streams_div .stream_thumbnail_focused .stream_thumbnail_channel_img,
+            .streams_div .stream_thumbnail_focused_no_ani .stream_thumbnail_channel_img {
+                box-shadow:
+                    0 0 0 0.5vh var(--tv-bg),
+                    0 0 0 1.2vh var(--tv-accent),
+                    0 2vh 4vh rgba(0, 0, 0, 0.6);
+            }
+
+            .streams_div .stream_thumbnail_channel_text_holder {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: auto;
+                padding: 0;
+                bottom: 3%;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            .streams_div .stream_info_channel_name {
+                width: auto;
+                max-width: 100%;
+                margin: 0;
+                text-align: center;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.9vh;
+                text-shadow: none;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            .streams_div .stream_info_channel_partner_icon img {
+                width: 1.9vh !important;
+                margin-left: 0.6vh;
+            }
+
+            /* Player feed (user_feed): the row of streams that slides up from the bottom of the player.
+               Card positions and sizes stay with UserLiveFeed (percent based), only the look changes. */
+            #user_feed {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                letter-spacing: normal;
+                -webkit-text-stroke: 0;
+            }
+
+            #user_feed .strokedeline,
+            #user_feed .strokedelinebig {
+                text-shadow: none;
+            }
+
+            .user_feed {
+                background: linear-gradient(0deg, rgba(8, 8, 10, 0.97) 0%, rgba(8, 8, 10, 0.88) 55%, rgba(8, 8, 10, 0) 100%);
+            }
+
+            /* No card background: rounded preview with the focus ring (SettingsColor.js), text below.
+               A narrower card inside its slot gives the gap between cards. */
+            #user_feed .stream_thumbnail_player_feed {
+                width: 93%;
+                border-radius: 0;
+                background-color: transparent !important;
+            }
+
+            #user_feed .stream_thumbnail_game_feed {
+                width: 88%;
+                border-radius: 0;
+                background-color: transparent !important;
+            }
+
+            #user_feed .stream_thumbnail_live_img,
+            #user_feed .stream_thumbnail_feed_game {
+                overflow: hidden;
+                border-radius: 1.2vh;
+                background-color: var(--tv-card);
+            }
+
+            #user_feed img.stream_img {
+                border-radius: 0;
+            }
+
+            /* The stream row sat high above the tabs once its text got smaller; the game row already fits */
+            .user_feed_scroll {
+                bottom: 12.5%;
+            }
+
+            /* Same 4vh side margins as the player controls, so the first and last cards and their focus ring are
+               not cut; card widths are a percent of this width, so they shrink a little to fit */
+            .user_feed_scroll,
+            .user_feed_scroll_game {
+                left: 4vh;
+                width: calc(100% - 8vh);
+            }
+
+            /* Previews are dimmed a little so the focused one stands out */
+            #user_feed .stream_thumbnail_live_img,
+            #user_feed .stream_thumbnail_feed_game {
+                filter: brightness(0.72);
+                transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            #user_feed .feed_thumbnail_focused .stream_thumbnail_live_img,
+            #user_feed .feed_thumbnail_focused_no_ani .stream_thumbnail_live_img,
+            #user_feed .feed_thumbnail_focused .stream_thumbnail_feed_game,
+            #user_feed .feed_thumbnail_focused_no_ani .stream_thumbnail_feed_game {
+                filter: none;
+            }
+
+            #user_feed .feed_thumbnail_focused .stream_info_live_title,
+            #user_feed .feed_thumbnail_focused_no_ani .stream_info_live_title,
+            #user_feed .feed_thumbnail_focused .stream_info_live_title_single_line,
+            #user_feed .feed_thumbnail_focused_no_ani .stream_info_live_title_single_line {
+                color: var(--tv-text);
+            }
+
+            #user_feed .stream_thumbnail_feed_text_holder,
+            #user_feed .stream_thumbnail_game_feed_text_holder {
+                padding: 0.9vh 0.2vh 0;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+            }
+
+            #user_feed .stream_info_game_name {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.7vh;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            #user_feed .game_meta {
+                font-size: 1.35vh;
+            }
+
+            /* Browser only refresh button for the mouse (on the TV it is hold up), a pill with icon and label */
+            .feed_refresh_button {
+                position: absolute;
+                right: 1.6vh;
+                bottom: 4.2vh;
+                z-index: 999;
+                display: flex;
+                align-items: center;
+                gap: 0.8vh;
+                height: 4.4vh;
+                padding: 0 1.8vh 0 1.4vh;
+                border-radius: 999px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: var(--tv-text);
+                font-weight: 600;
+                font-size: 1.6vh;
+                cursor: pointer;
+                transition: background-color 120ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+
+            .feed_refresh_button:hover {
+                background-color: var(--tv-accent);
+            }
+
+            /* BrowserTest reads the clicked id, so clicks must land on the button itself */
+            .feed_refresh_button * {
+                pointer-events: none;
+            }
+
+            .feed_refresh_button svg {
+                width: 2.2vh;
+                height: 2.2vh;
+            }
+
+            #user_feed .stream_text_holder {
+                top: auto;
+                transform: none;
+            }
+
+            #user_feed .stream_info_live_name {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 700;
+                font-size: 1.8vh;
+                color: var(--tv-text);
+                opacity: 1;
+            }
+
+            /* language, game and stats lines; the language carries an inline font-size: 70% */
+            #user_feed .stream_info_live {
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.35vh !important;
+                color: var(--tv-muted);
+                opacity: 1;
+            }
+
+            /* one line title keeps the cards calm, the full title is in the player */
+            #user_feed .stream_info_live_title,
+            #user_feed .stream_info_live_title_single_line {
+                margin: 0.3vh 0 0.2vh;
+                font-weight: 500;
+                font-size: 1.45vh;
+                line-height: 1.35;
+                max-height: 1.35em;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                color: var(--tv-text-2);
+            }
+
+            #user_feed .live_icon {
+                font-size: 1.1vh;
+                vertical-align: middle;
+            }
+
+            /* Tabs under the cards, the focused one is a white pill like the side menu */
+            #user_feed .icon_feed_refresh {
+                filter: none;
+                font-family: 'Manrope', 'Roboto', sans-serif;
+            }
+
+            #feed_end {
+                display: flex;
+                align-items: center;
+                gap: 0.6vh;
+                margin-left: 4vh;
+            }
+
+            .feed_end_up_down {
+                transform: none;
+                opacity: 0.6;
+            }
+
+            .feed_end_name {
+                transform: none;
+                margin: 0;
+                padding: 0.5vh 1.4vh;
+                border: 0;
+                border-radius: 999px;
+                font-weight: 600;
+                font-size: 1.7vh;
+                color: var(--tv-muted);
+                background-color: transparent;
+            }
+
+            .feed_end_name.feed_end_name_focus {
+                transform: none;
+                background-color: var(--tv-text);
+                color: var(--tv-bg);
+                font-weight: 700;
+            }
+
+            #icon_feed_refresh,
+            #feed_last_refresh,
+            #feed_counter,
+            #icon_feed_back {
+                font-weight: 600;
+                font-size: 1.5vh;
+                color: var(--tv-muted);
+            }
+
+            #icon_feed_refresh,
+            #icon_feed_back {
+                margin-left: 4vh;
+            }
+
+            /* Browser only: leave the embedded player */
+            .exit_player {
+                top: 1.6vh;
+                left: 1.6vh;
+                padding: 0.8vh 1.4vh;
+                border-radius: 1.2vh;
+                background-color: rgba(21, 21, 27, 0.85);
+                font-family: 'Manrope', 'Roboto', sans-serif;
+                font-weight: 600;
+                font-size: 1.6vh;
+                text-shadow: none;
+            }
         </style>
     </head>
 
@@ -2918,8 +5831,14 @@
                         <div id="dialog_opt_text_end" class="exit_text"></div>
                     </div>
                 </div>
-                <div id="dialog_warning" class="strokedeline dialogs hide" style="z-index: 100; margin-top: 50vh">
-                    <div id="dialog_warning_text" class="strokedeline dialog_text" style="font-size: 150%"></div>
+                <div id="dialog_warning" class="tv_toast" role="status" aria-live="polite" style="z-index: 100">
+                    <span class="tv_toast_icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 11v5M12 7.5h.01"></path>
+                        </svg>
+                    </span>
+                    <div id="dialog_warning_text" class="tv_toast_text"></div>
                 </div>
                 <div id="dialog_controls" class="screens hide" style="z-index: 99; background: rgba(0, 0, 0, 0.75)">
                     <div class="about_dialogs" style="width: 95%; margin-left: 2.5%">
@@ -3016,10 +5935,8 @@
                         </div>
                     </div>
                 </div>
-                <div id="dialog_counter" style="position: absolute; z-index: 2; bottom: 0; right: 2vh; width: auto; height: auto">
-                    <div style="background: linear-gradient(to top, black, rgba(0, 0, 0, 0.75))">
-                        <div id="dialog_counter_text" class="counter_class"></div>
-                    </div>
+                <div id="dialog_counter" style="position: absolute; z-index: 2; bottom: 2vh; right: 2.4vh; width: auto; height: auto">
+                    <div id="dialog_counter_text" class="counter_class"></div>
                 </div>
                 <div id="screens_holder" class="screens">
                     <!-- Channel screens-->
@@ -3083,6 +6000,10 @@
                         <div id="stream_table_user" class="streams_div"></div>
                     </div>
                     <div id="settings_holder" class="settings_holder hide">
+                        <!-- Sections of the page, Settings_SetNav -->
+                        <div id="settings_nav" class="settings_nav">
+                            <div id="settings_nav_list"></div>
+                        </div>
                         <div id="settings_scroll" class="screen_holder_settings">
                             <div id="settings_main" class="settings_main">
                                 <!-- Settings_SetSettings()-->
@@ -3103,17 +6024,28 @@
 
                     <!-- Input screens-->
                     <div id="add_user_scroll" class="screen_holder hide">
-                        <div id="add_user" class="input_text_box" style="margin-top: 10%">
+                        <div id="add_user" class="input_text_box activate_box">
                             <!-- <input id="user_input" class="input_class hide" type="text" placeholder="" /> -->
-                            <div id="add_user_text_holder" class="hide">
+                            <!-- Sign in card, AddUser_ActivateCard fills add_user_text -->
+                            <div id="add_user_text_holder" class="activate_card hide">
                                 <div id="add_user_text" class="add_user_text">Text</div>
-                                <div id="add_user_text_counter" class="add_user_text">counter 1 2 ...</div>
+                                <div class="activate_status">
+                                    <span class="activate_status_dot"></span>
+                                    <span id="add_user_text_counter">counter 1 2 ...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div id="search_scroll" class="screen_holder hide">
-                        <div id="search" class="input_text_box" style="margin-top: 10%">
-                            <input id="search_input" class="input_class" type="text" placeholder="" />
+                        <div id="search" class="input_text_box search_box">
+                            <div id="search_title" class="search_title"></div>
+                            <div class="search_field">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="11" cy="11" r="7"></circle>
+                                    <path d="M20 20l-3.5-3.5"></path>
+                                </svg>
+                                <input id="search_input" class="input_class" type="text" placeholder="" />
+                            </div>
                             <div id="search_button_holder" class="button_search_container">
                                 <div id="chanel_button" class="button_search"></div>
                                 <div id="game_button" class="button_search"></div>
@@ -3144,6 +6076,9 @@
                         <div id="stream_table_user_host" class="streams_div"></div>
                     </div>
                     <div id="UserLive_scroll" class="screen_holder hide">
+                        <!-- Home only (Main_values.Main_Home): section title, it scrolls away with the rows.
+                             It sits outside the table because Screens inserts rows at the table start. -->
+                        <div id="home_section_title" class="home_section_title hide"></div>
                         <div id="stream_table_user_live" class="streams_div"></div>
                     </div>
                     <div id="AGame_scroll" class="screen_holder_switch hide">
@@ -3191,118 +6126,103 @@
                 </div>
                 <div id="topbar" class="topbar">
                     <div id="top_lable" class="top_lable"></div>
-                    <button id="button_full_screen" class="hide">
-                        <div id="button_full_screen_text" style="opacity: 0; color: #ffffff; display: inline-block"></div>
-                        <div id="button_full_screen_icon_contaner" style="display: inline-block; transform: translateY(-50%)">
-                            <i id="button_full_screen_icon" class="pause_button3d icon-pp"></i>
-                        </div>
+                    <div id="label_last_refresh" class="top_meta"></div>
+                    <!-- Browser only, the label shows as a tooltip on hover -->
+                    <button id="button_full_screen" class="hide" aria-label="Full screen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                        </svg>
+                        <div id="button_full_screen_text"></div>
                     </button>
                     <div class="top_clock" style="top: 1.75ch">
                         <div class="icon_top_label"></div>
                         <div id="label_update" class="icon_top_label"></div>
                     </div>
                     <div id="controls_div" class="controls_div">
-                        <div id="top_lable_etc" class="show_pointer" style="line-height: 1vh">
-                            <div id="label_refresh" class="icon_top_label" style="display: inline-block"></div>
-                            <div id="label_last_refresh" class="icon_top_label" style="display: inline-block; transform: translateY(10%)"></div>
+                        <div id="top_lable_etc" class="top_hint show_pointer">
+                            <div id="label_refresh" class="icon_top_label"></div>
                         </div>
-                        <div id="label_thumb" class="icon_top_label show_pointer" style="margin-top: 1%"></div>
+                        <div id="label_thumb" class="top_hint icon_top_label show_pointer"></div>
                     </div>
                 </div>
                 <div id="side_panel_new_holder" class="hide side_panel_new_holder">
+                    <!--
+                        Side menu. The open menu (side_panel_movel) and the collapsed rail (side_panel_fix) share the
+                        same order and row sizes so every icon stays on the same line when the menu opens or closes.
+                        Rows are filled by Sidepannel_SetRow, Sidepannel_MainOrder walks them with the remote.
+                        side_panel_user (set on both) switches to the follows menu: back row and section label on top.
+                    -->
                     <div id="side_panel_movel" class="side_panel_movel side_panel_background_color" style="z-index: 3">
-                        <div class="side_panel_fix_top">
-                            <div id="side_panel_top_text" class="side_panel_movel_top_text">
-                                <div class="side_panel_icons">
-                                    <i class="icon icon-arrow-left"></i>
-                                </div>
-                                &nbsp;
-                                <span id="side_panel_movel_top_text"></span>
+                        <div class="side_panel_logo">
+                            <div class="side_panel_logo_mark">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+                                    <path d="M8 21h8M12 17v4"></path>
+                                </svg>
                             </div>
-                            <!-- Empty div are added to fill up the container and make the layout perfect align-->
-                            <div id="side_panel_top_text_empty" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_0" class="side_panel_new_icons_text_holder" style="height: 1.9em"></div>
-                            <div class="side_panel_new_icons_text_holder"></div>
-                        </div>
-                        <div class="side_panel_fix_top_2">
-                            <div class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_1" class="side_panel_new_icons_text_holder"></div>
-                            <div class="side_panel_new_icons_text_holder"></div>
-                        </div>
-                        <div id="side_panel_movel_center" class="side_panel_fix_center">
-                            <div id="side_panel_movel_user_text_holder" class="side_panel_movel_user_text hide">
-                                <span id="side_panel_movel_user_text"></span>
-                            </div>
-                            <div id="side_panel_movel_new_2" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_3" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_4" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_5" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_6" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_7" class="side_panel_new_icons_text_holder"></div>
-                            <div id="side_panel_movel_new_8" class="side_panel_new_icons_text_holder hide"></div>
-                            <div id="side_panel_movel_new_9" class="side_panel_new_icons_text_holder hide"></div>
-                        </div>
-                        <div id="side_panel_movel_bottom" class="side_panel_fix_bottom">
-                            <div class="side_panel_movel_bottom_holder">
-                                <div class="side_panel_movel_bottom_text">
-                                    <div id="side_panel_movel_new_10" class="side_panel_new_text_options"></div>
-                                </div>
-                                <div class="side_panel_movel_bottom_text">
-                                    <div id="side_panel_movel_new_11" class="side_panel_new_text_options"></div>
-                                </div>
-                                <div class="side_panel_movel_bottom_text">
-                                    <div id="side_panel_movel_new_12" class="side_panel_new_text_options"></div>
-                                </div>
-                                <div class="side_panel_movel_bottom_text">
-                                    <div id="side_panel_movel_new_13" class="side_panel_new_text_options"></div>
-                                </div>
-                                <div class="side_panel_movel_bottom_text">
-                                    <div id="side_panel_movel_new_14" class="side_panel_new_text_options"></div>
-                                </div>
+                            <div class="side_panel_logo_text">
+                                <div class="side_panel_logo_title">Twitch</div>
+                                <div class="side_panel_logo_sub">for Smart TV</div>
                             </div>
                         </div>
+                        <div id="side_panel_movel_new_1" class="side_panel_row"></div>
+                        <!-- Home: the followed live channels, only with a user, see Sidepannel_SetUserLabel -->
+                        <div id="side_panel_movel_new_15" class="side_panel_row side_panel_row_home hide"></div>
+                        <div id="side_panel_movel_new_3" class="side_panel_row"></div>
+                        <div id="side_panel_movel_new_4" class="side_panel_row"></div>
+                        <div id="side_panel_movel_new_5" class="side_panel_row"></div>
+                        <div id="side_panel_movel_new_6" class="side_panel_row"></div>
+                        <div id="side_panel_movel_new_7" class="side_panel_row"></div>
+                        <div class="side_panel_divider"></div>
+                        <div id="side_panel_movel_new_2" class="side_panel_row side_panel_row_mode"></div>
+                        <div id="side_panel_movel_user_text_holder" class="side_panel_section">
+                            <span id="side_panel_movel_user_text"></span>
+                        </div>
+                        <div id="side_panel_movel_new_8" class="side_panel_row hide"></div>
+                        <div id="side_panel_movel_new_9" class="side_panel_row hide"></div>
+                        <div class="side_panel_spacer"></div>
+                        <div id="side_panel_movel_new_10" class="side_panel_row side_panel_row_small"></div>
+                        <div id="side_panel_movel_new_13" class="side_panel_row side_panel_row_small"></div>
+                        <div id="side_panel_movel_new_0" class="side_panel_row side_panel_row_account"></div>
+                        <!-- Kept for Main.js and Settings_HideEtcHelp, the redesign has no live feed hint -->
+                        <div id="side_panel_top_text" class="hideimp"><span id="side_panel_movel_top_text"></span></div>
                     </div>
-                    <div id="side_panel_fix" class="side_panel_fix avoidclicks">
-                        <div class="side_panel_fix_top" style="background-color: #000000">
-                            <!-- Empty div are added to fill up the container and make the layout perfect align-->
-                            <div class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_0" class="side_panel_new_icons">
-                                <div id="icon_side_panel_imgholder_0"></div>
-                            </div>
+                    <div id="side_panel_fix" class="side_panel_fix side_panel_background_color avoidclicks">
+                        <div class="side_panel_logo_mark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+                                <path d="M8 21h8M12 17v4"></path>
+                            </svg>
                         </div>
-                        <div class="side_panel_fix_top_2">
-                            <div class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_1" class="side_panel_new_icons">
-                                <i class="icon icon-search side_panel_new_icons_pad"></i>
-                            </div>
-                            <div class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_1" class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_15" class="side_panel_new_icons side_panel_row_home hide"></div>
+                        <div id="side_panel_new_3" class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_4" class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_5" class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_6" class="side_panel_new_icons"></div>
+                        <div id="side_panel_new_7" class="side_panel_new_icons"></div>
+                        <div class="side_panel_divider"></div>
+                        <div id="side_panel_new_2" class="side_panel_new_icons side_panel_row_mode"></div>
+                        <div class="side_panel_section"></div>
+                        <div id="side_panel_new_8" class="side_panel_new_icons hide"></div>
+                        <div id="side_panel_new_9" class="side_panel_new_icons hide"></div>
+                        <div class="side_panel_spacer"></div>
+                        <div id="side_panel_new_10" class="side_panel_new_icons side_panel_row_small"></div>
+                        <div id="side_panel_new_13" class="side_panel_new_icons side_panel_row_small"></div>
+                        <div id="side_panel_new_0" class="side_panel_new_icons side_panel_row_account">
+                            <div id="icon_side_panel_imgholder_0" class="side_panel_avatar"></div>
                         </div>
-                        <div id="side_panel_fix_center" class="side_panel_fix_center" style="background-color: #000000">
-                            <div id="side_panel_new_2" class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_3" class="side_panel_new_icons">
-                                <i id="icon_side_panel_new_3" class="icon icon-play side_panel_new_icons_pad"></i>
-                            </div>
-                            <div id="side_panel_new_4" class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_5" class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_6" class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_7" class="side_panel_new_icons"></div>
-                            <div id="side_panel_new_8" class="side_panel_new_icons">
-                                <i id="icon_side_panel_new_8" class="icon icon-history side_panel_new_icons_pad"></i>
-                            </div>
-                            <div id="side_panel_new_9" class="side_panel_new_icons">
-                                <i id="icon_side_panel_new_9" class="icon icon-blocked side_panel_new_icons_pad"></i>
-                            </div>
-                        </div>
-                        <div
-                            id="side_panel_fix_botton"
-                            class="side_panel_fix_bottom avoidclicks"
-                            style="width: 30%; background-color: #000000; pointer-events: none"
-                        ></div>
                     </div>
                 </div>
                 <div id="scenefeed" class="feed_screen_new">
-                    <div id="sidepannel_dialog_warning" class="strokedeline dialogs hide" style="top: 35vh; left: 28%; width: 69%; z-index: 100">
-                        <div id="sidepannel_dialog_warning_text" class="strokedeline dialog_text" style="font-size: 150%"></div>
+                    <div id="sidepannel_dialog_warning" class="tv_toast" role="status" aria-live="polite" style="z-index: 100">
+                        <span class="tv_toast_icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M12 11v5M12 7.5h.01"></path>
+                            </svg>
+                        </span>
+                        <div id="sidepannel_dialog_warning_text" class="tv_toast_text"></div>
                     </div>
                     <div id="side_panel_feed_thumb" class="side_panel_feed_thumb opacity_zero">
                         <div class="stream_thumbnail_side">
@@ -3553,6 +6473,8 @@
                             <div class="playmaininfo">
                                 <div style="font-size: 155%">
                                     <div id="stream_info_name" style="display: inline-block; max-width: 88%" class="class_bold multi_info_line"></div>
+                                    <!-- live / video / clip, Play_SetInfoBadge -->
+                                    <span id="stream_info_badge" class="stream_info_badge"></span>
                                     <div id="stream_info_audio" class="audio_icon"></div>
                                 </div>
                                 <div id="stream_info_title"></div>
@@ -4243,12 +7165,26 @@
                 <div id="play_dialog_retry" class="dialogs hide" style="z-index: 6; top: 32vh; width: 22%; left: 39%">
                     <div id="play_dialog_retry_text" class="strokedelinebig dialog_text" style="font-size: 2.6vh"></div>
                 </div>
-                <div id="dialog_warning_play" class="dialogs hide" style="z-index: 7; top: 10vh">
-                    <div id="dialog_warning_play_text" class="strokedelinebig dialog_text" style="font-size: 140%"></div>
+                <div id="dialog_warning_play" class="tv_toast" role="status" aria-live="polite" style="z-index: 7">
+                    <span class="tv_toast_icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 11v5M12 7.5h.01"></path>
+                        </svg>
+                    </span>
+                    <div id="dialog_warning_play_text" class="tv_toast_text"></div>
                 </div>
-                <div id="dialog_warning_play_middle" class="dialogs hide" style="z-index: 101; top: 50vh">
-                    <div id="dialog_warning_play_middle_text" class="strokedelinebig dialog_text" style="font-size: 140%"></div>
+                <div id="dialog_warning_play_middle" class="tv_toast" role="status" aria-live="polite" style="z-index: 101">
+                    <span class="tv_toast_icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 11v5M12 7.5h.01"></path>
+                        </svg>
+                    </span>
+                    <div id="dialog_warning_play_middle_text" class="tv_toast_text"></div>
                 </div>
+                <!-- Play / pause feedback in the middle of the video, Play_ShowPlayPauseFlash -->
+                <div id="dialog_play_flash" class="play_flash" aria-hidden="true"></div>
                 <div id="dialog_warning_muted" class="dialogs hide" style="z-index: 7; top: 70vh">
                     <div id="dialog_warning_muted_text" class="strokedelinebig dialog_text" style="font-size: 100%"></div>
                 </div>
@@ -4319,19 +7255,13 @@
 
                     <div
                         id="feed_refresh_button"
-                        class="hideimp controls_button progress_bar_div_focus embedbutton"
-                        style="position: absolute; right: 1vh; bottom: 3vh; z-index: 999"
+                        class="hideimp feed_refresh_button"
                     >
-                        <div
-                            id="feed_refresh_button_text_holder"
-                            class="embedbuttoninner controls_text_title_holder"
-                            style="transform: translateX(-113%); position: absolute; text-align: center; opacity: 0"
-                        >
-                            <div id="feed_refresh_button_text_title" class="strokedeline"></div>
-                        </div>
-                        <div id="feed_refresh_button_icon_holder_">
-                            <i id="feed_refresh_button_icon" class="pause_button3d icon-refresh"></i>
-                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                        <span id="feed_refresh_button_text_title"></span>
                     </div>
                 </div>
 

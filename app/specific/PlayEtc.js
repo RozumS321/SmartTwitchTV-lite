@@ -125,6 +125,84 @@ function Play_controlsAudioEnaupdown(pos, adder, obj) {
     Play_SetAudioIcon();
 }
 
+//Player icons: 24px grid, 2px stroke in currentColor, keyed by the old icon font names used in Play_controls
+var Play_IconPaths = {
+    'key-left': '<path d="M19 12H5M12 19l-7-7 7-7"></path>',
+    search: '<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>',
+    filmstrip: '<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"></path>',
+    gamepad: '<rect x="2" y="7" width="20" height="11" rx="5"></rect><path d="M7 10.5v3M5.5 12h3M15.5 11.5h.01M18 13.5h.01"></path>',
+    play: '<circle cx="12" cy="12" r="2"></circle><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"></path>',
+    'movie-play': '<rect x="2" y="5" width="14" height="14" rx="2.5"></rect><path d="M16 10l6-3.5v11L16 14"></path>',
+    'heart-o': '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path>',
+    heart: '<path fill="currentColor" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path>',
+    speedometer: '<path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path>',
+    external: '<path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>',
+    rewind: '<path d="M11 19l-9-7 9-7zM22 19l-9-7 9-7z"></path>',
+    videocamera: '<rect x="2" y="5" width="20" height="14" rx="3"></rect><path d="M6.5 9v6M10.5 9v6M6.5 12h4M14 9v6h1.5a3 3 0 0 0 0-6z"></path>',
+    'screen-off': '<rect x="2" y="4" width="20" height="13" rx="2"></rect><path d="M8 21h8M3 3l18 18"></path>',
+    history: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"></path>',
+    feed: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path>',
+    multi:
+        '<rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect>' +
+        '<rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>',
+    volume: '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"></path>',
+    mute: '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M22 9l-6 6M16 9l6 6"></path>',
+    'vol-level-0': '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M22 9l-6 6M16 9l6 6"></path>',
+    'vol-level-1': '<path d="M11 5L6 9H2v6h4l5 4z"></path>',
+    'vol-level-2': '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>',
+    'vol-level-3': '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"></path>',
+    'vol-level-4': '<path d="M11 5L6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"></path>',
+    'resize-up': '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>',
+    'resize-down': '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"></path>',
+    pp: '<rect x="2" y="4" width="20" height="16" rx="2"></rect><rect x="12" y="12" width="7" height="5" rx="1"></rect>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path>',
+    keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"></path>',
+    'chat-settings':
+        '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle>' +
+        '<circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle>',
+    status: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>',
+    preview: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle>',
+    'chat-stop': '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path><path d="M5 5l14 14"></path>',
+    proxy:
+        '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path>' +
+        '<path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path>',
+    'chat-delay': '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
+    'chat-pos': '<rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M15 3v18"></path>',
+    'chat-size': '<rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 15l6-6M10 9h5v5"></path>',
+    'chat-brig':
+        '<circle cx="12" cy="12" r="4"></circle>' +
+        '<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>',
+    'chat-font': '<path d="M4 7V4h16v3M9 20h6M12 4v16"></path>',
+    speaker: '<rect x="5" y="2" width="14" height="20" rx="2"></rect><circle cx="12" cy="14" r="4"></circle><path d="M12 6h.01"></path>',
+    levels: '<path d="M6 20v-6M12 20V4M18 20V10"></path>',
+    'remote-control': '<rect x="7" y="2" width="10" height="20" rx="3"></rect><circle cx="12" cy="8" r="2"></circle><path d="M12 14h.01M12 17h.01"></path>',
+    globe: '<circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>',
+    pause:
+        '<rect x="6.5" y="5" width="3.6" height="14" rx="1.8" fill="currentColor" stroke="none"></rect>' +
+        '<rect x="13.9" y="5" width="3.6" height="14" rx="1.8" fill="currentColor" stroke="none"></rect>',
+    //rounded triangle, nudged right so it looks centered in a circle
+    'play-1':
+        '<path fill="currentColor" stroke="none" d="M8.5 6.1v11.8a1.2 1.2 0 0 0 1.8 1l9.4-5.9a1.2 1.2 0 0 0 0-2L10.3 5.1a1.2 1.2 0 0 0-1.8 1z"></path>'
+};
+
+//Returns the icon markup, id and extraClass are optional; names without a drawing fall back to the icon font
+function Play_Icon(id, name, extraClass) {
+    var idAttr = id ? ' id="' + id + '"' : '';
+
+    if (!Play_IconPaths[name]) return '<i' + idAttr + ' class="pause_button3d icon-' + name + '"></i>';
+
+    return (
+        '<svg' +
+        idAttr +
+        ' class="player_svg' +
+        (extraClass ? ' ' + extraClass : '') +
+        '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        Play_IconPaths[name] +
+        '</svg>'
+    );
+}
+
 function Play_controlsAudioEnasetLabel(pos, data, obj) {
     obj.defaultValue = Play_audio_enable[pos];
 
@@ -132,10 +210,7 @@ function Play_controlsAudioEnasetLabel(pos, data, obj) {
 
     Main_textContentWithEle(obj.doc_name, obj.values[obj.defaultValue]);
 
-    Main_innerHTML(
-        'controls_button_icon_holder_' + obj.position,
-        '<i id="controls_button_icon_' + obj.position + '" class="pause_button3d icon-' + (Play_audio_enable[pos] ? 'volume' : 'mute') + '" ></i > '
-    );
+    Main_innerHTML('controls_button_icon_holder_' + obj.position, Play_Icon('controls_button_icon_' + obj.position, Play_audio_enable[pos] ? 'volume' : 'mute'));
 }
 
 function Play_controlsAudioVolupdown(pos, adder, obj) {
@@ -167,10 +242,7 @@ function Play_controlsAudioVolupsetLabel(pos, data, obj) {
 
     Main_textContentWithEle(obj.doc_name, Play_volumes[pos] + ' %');
 
-    Main_innerHTML(
-        'controls_button_icon_holder_' + obj.position,
-        '<i id="controls_button_icon_' + obj.position + '" class="pause_button3d icon-' + Play_GetVolLevel(pos) + '" ></i > '
-    );
+    Main_innerHTML('controls_button_icon_holder_' + obj.position, Play_Icon('controls_button_icon_' + obj.position, Play_GetVolLevel(pos)));
 }
 
 function Play_GetVolLevel(pos) {
@@ -1322,15 +1394,11 @@ function Play_PlayPauseChange(State, PlayVodClip) {
     }
 
     Main_innerHTMLWithEle(Play_BottonIcons_Pause, Play_GetPlayPauseIcon(State));
-    Play_showWarningMiddleDialog(Play_GetPlayPauseIcon(!State), 500);
+    Play_ShowPlayPauseFlash(!State);
 }
 
 function Play_GetPlayPauseIcon(not_playing) {
-    return (
-        '<div id="pause_button_icon_holder"><i id="pause_button_icon" class="pause_button3d ' +
-        (not_playing ? 'icon-pause' : 'icon-play-1') +
-        '"></i></div>'
-    );
+    return '<div id="pause_button_icon_holder">' + Play_Icon('pause_button_icon', not_playing ? 'pause' : 'play-1') + '</div>';
 }
 
 function Play_KeyReturn(is_vod) {
@@ -1476,7 +1544,7 @@ function Play_CheckPreviewLive(SkipSidepanelFocus) {
 function Play_GetAudioIcon(pos) {
     var icon = Play_audio_enable[pos] ? Play_GetVolLevel(pos) : 'vol-level-0';
 
-    return STR_SPACE_HTML + '<i class="icon-' + icon + ' strokicon_title" ></i>';
+    return STR_SPACE_HTML + Play_Icon(null, icon, 'player_svg_inline');
 }
 
 function Play_SetAudioIcon() {
@@ -1484,12 +1552,13 @@ function Play_SetAudioIcon() {
         icon;
 
     if (Play_MultiEnable) {
-        var extraText = Play_Multi_MainBig ? 'big' : '';
+        //same ids as PlayMulti.js: stream_info_multi_audio0 or stream_info_multi_audio_big0
+        var extraText = Play_Multi_MainBig ? '_big' : '';
 
         for (i; i < 4; i++) {
             icon = Play_MultiArray[i].data.length > 0 ? Play_GetAudioIcon(i) : '';
 
-            Main_innerHTML('stream_info_multi_audio_' + extraText + i, STR_SPACE_HTML + icon);
+            Main_innerHTML('stream_info_multi_audio' + extraText + i, STR_SPACE_HTML + icon);
         }
     } else if (PlayExtra_PicturePicture) {
         for (i; i < 2; i++) {
@@ -2032,6 +2101,33 @@ var Play_controlsDefault = Play_controlsChat;
 var Play_PanelCounter = Play_controlsDefault;
 var Play_PanelCounterBefore = 0;
 
+//Redesign: the only buttons of the main player rows, in the order they are drawn and walked with left/right.
+//Each one still needs its ShowIn* flag for the current mode; sub menus (chat options, audio, preview) are not limited.
+var Play_ControlsMain = [
+    Play_controlsChat,
+    Play_controlsQuality,
+    Play_controlsQualityMini,
+    Play_controlsQualityMulti,
+    Play_MultiStream,
+    Play_controlsAudio, //only in picture in picture and multistream, to pick the window with sound
+    Play_controlsSpeed, //VOD and clip
+    Play_controlsChapters, //VOD with chapters
+    Play_controlsOpenLive,
+    Play_controlsOpenVod,
+    Play_controlsFollow
+];
+var Play_ControlsMainProps = ['ShowInLive', 'ShowInVod', 'ShowInClip', 'ShowInPP', 'ShowInMulti', 'ShowInStay'];
+//Every control in drawing order: Play_ControlsMain first, the rest after, filled by Play_MakeControls
+var Play_ControlsNav = [];
+
+function Play_ControlIsShown(key, prop) {
+    if (!Play_controls[key][prop]) return false;
+    if (Play_ControlsMainProps.indexOf(prop) === -1) return true;
+    if (key === Play_controlsAudio) return prop === 'ShowInPP' || prop === 'ShowInMulti';
+
+    return Play_ControlsMain.indexOf(key) > -1;
+}
+
 function Play_MakeControls() {
     Play_controls[Play_controlsBack] = {
         //Search
@@ -2252,16 +2348,8 @@ function Play_MakeControls() {
             //Main_textContent('controls_text_summary_' + this.position, AddCode_IsFollowing ? STR_CLICK_UNFOLLOW : STR_CLICK_FOLLOW);
         },
         setIcon: function (AddCode_IsFollowing) {
-            Main_innerHTML(
-                'controls_button_icon_holder_' + this.position,
-                '<i id="controls_button_icon_' +
-                    this.position +
-                    '" class="pause_button3d icon-' +
-                    (AddCode_IsFollowing ? 'heart' : 'heart-o') +
-                    '" style="color: #' +
-                    (AddCode_IsFollowing ? '6441a4' : 'FFFFFF') +
-                    ';" ></i>'
-            );
+            //Followed shows a filled heart, the color comes from .player_svg_followed
+            Main_innerHTML('controls_button_icon_holder_' + this.position, Play_Icon('controls_button_icon_' + this.position, AddCode_IsFollowing ? 'heart' : 'heart-o'));
         }
     };
 
@@ -2894,10 +2982,7 @@ function Play_MakeControls() {
             var icon = Play_isFullScreen ? 'resize-down' : 'resize-up';
             if (PlayExtra_PicturePicture) icon = 'pp';
 
-            Main_innerHTML(
-                'controls_button_icon_holder_' + this.position,
-                '<i id="controls_button_icon_' + this.position + '" class="pause_button3d icon-' + icon + '" ></i>'
-            );
+            Main_innerHTML('controls_button_icon_holder_' + this.position, Play_Icon('controls_button_icon_' + this.position, icon));
         }
     };
 
@@ -3992,20 +4077,19 @@ function Play_MakeControls() {
 
     for (i; i < len; i++) {
         div = document.createElement('div');
-        div.className = 'controls_button_holder';
+        //Follow sits on the right end of the row
+        div.className = 'controls_button_holder' + (i === Play_controlsFollow ? ' controls_button_holder_end' : '');
         div.setAttribute('id', 'controls_' + i);
 
         div.innerHTML =
             '<div id="controls_button_' +
             i +
+            //offsetY was a nudge for the icon font glyphs, the SVG icons are centered by CSS
             '" class="controls_button"><div id="controls_button_icon_holder_' +
             i +
-            (Play_controls[i].offsetY ? '" style="transform: translateY(' + Play_controls[i].offsetY + '%);"' : '"') +
-            '><i id="controls_button_icon_' +
-            i +
-            '" class="pause_button3d icon-' +
-            Play_controls[i].icons +
-            '" ></i></div></div><div id="controls_text_holder' +
+            '" class="controls_button_icon">' +
+            Play_Icon('controls_button_icon_' + i, Play_controls[i].icons) +
+            '</div></div><div id="controls_text_holder' +
             i +
             '" class="controls_text_title_holder" style="opacity: 0;"><div id="controls_text_title_' +
             i +
@@ -4017,11 +4101,20 @@ function Play_MakeControls() {
             (Play_controls[i].values ? Play_SetControlsArrows(i) : STR_SPACE_HTML) +
             '</div></div></div>';
 
-        fragment.appendChild(div);
         Play_controlsSize++;
         Play_controls[i].position = i;
         Play_controls[i].visible = true;
         Play_controls[i].doc = div;
+    }
+
+    //Draw (and walk) the main buttons first in their own order, then everything else by position
+    Play_ControlsNav = Play_ControlsMain.slice();
+    for (i = 0; i < len; i++) {
+        if (Play_ControlsNav.indexOf(i) === -1) Play_ControlsNav.push(i);
+    }
+
+    for (i = 0; i < len; i++) {
+        fragment.appendChild(Play_controls[Play_ControlsNav[i]].doc);
     }
     doc.appendChild(fragment);
 
@@ -4063,7 +4156,7 @@ function Play_SetControlsArrows(key) {
 
 function Play_SetControlsVisibility(prop) {
     for (var key in Play_controls) {
-        if (Play_controls[key][prop]) Play_BottomShow(key);
+        if (Play_ControlIsShown(parseInt(key), prop)) Play_BottomShow(key);
         else Play_BottomHide(key);
     }
 
@@ -4137,10 +4230,13 @@ function Play_IconsRemoveFocus() {
 function Play_BottomLeftRigt(PlayVodClip, adder, skipRemoveFocus) {
     if (!skipRemoveFocus) Play_IconsRemoveFocus();
 
-    Play_PanelCounter += adder;
+    //Walk the drawing order, Play_ControlsNav, not the control positions
+    var next = Play_ControlsNav.indexOf(Play_PanelCounter) + adder;
 
-    if (Play_PanelCounter > Play_controlsSize) Play_PanelCounter = 0;
-    else if (Play_PanelCounter < 0) Play_PanelCounter = Play_controlsSize;
+    if (next > Play_controlsSize) next = 0;
+    else if (next < 0) next = Play_controlsSize;
+
+    Play_PanelCounter = Play_ControlsNav[next];
 
     if (!Play_controls[Play_PanelCounter].visible) {
         Play_BottomLeftRigt(PlayVodClip, adder, true);

@@ -74,10 +74,7 @@ function PlayVod_Start() {
     Play_StartStayShowBottom();
 
     Play_LoadLogo(Main_getElementById('stream_info_icon'), IMG_404_BANNER);
-    Main_innerHTMLWithEle(
-        Play_BottonIcons_Pause,
-        '<div id="pause_button_icon_holder"><i id="pause_button_icon" class="pause_button3d icon-pause"></i> </div>'
-    );
+    Main_innerHTMLWithEle(Play_BottonIcons_Pause, Play_GetPlayPauseIcon(true));
     Main_HideElementWithEle(Play_BottonIcons_Progress_PauseHolder);
 
     Play_BottonIconsResetFocus();
@@ -607,6 +604,7 @@ function PlayVod_qualityReset() {
 }
 
 function PlayVod_showPanel(autoHide) {
+    Play_SetInfoBadge(1);
     if (Play_getQualitiesFail) Play_getQualities(2, true);
 
     PlayVod_SetChapters();
@@ -820,10 +818,7 @@ function PlayVod_jump() {
     PlayVod_previews_clear_img();
 
     Play_BottonIcons_Progress_Steps.style.display = 'none';
-    Main_innerHTMLWithEle(
-        Play_BottonIcons_Pause,
-        '<div id="pause_button_icon_holder"><i id="pause_button_icon" class="pause_button3d icon-pause"></i> </div>'
-    );
+    Main_innerHTMLWithEle(Play_BottonIcons_Pause, Play_GetPlayPauseIcon(true));
     PlayVod_jumpCount = Settings_value.vod_seek_min.defaultValue;
 
     Play_BufferSize = Play_BufferSize - PlayVod_addToJump;

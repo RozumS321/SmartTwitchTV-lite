@@ -65,6 +65,8 @@ function BrowserTestFun() {
     var pointer_css_classes =
         '.hist_name,' +
         '.settings_value_focus,' +
+        '.settings_nav_item,' +
+        '.settings_div,' +
         '.right,' +
         '.left,' +
         '.feed_end_name,' +
@@ -74,9 +76,7 @@ function BrowserTestFun() {
         '.exit_player,' +
         '.side_panel_div,' +
         '.side_panel_feed_top,' +
-        '.side_panel_movel_bottom_text,' +
-        '.side_panel_new_icons_text_holder,' +
-        '.side_panel_new_icons,' +
+        '.side_panel_row,' +
         '.streams_game_div,' +
         '.streams_div,' +
         extraClass +
@@ -229,23 +229,34 @@ function BrowserTestFun() {
     };
 
     var settings_holder = Main_getElementById('settings_holder');
+    var BrowserTestSettingsKey = function (event) {
+        var card = event.target.closest ? event.target.closest('#settings_main .settings_div') : null;
+
+        return card ? card.id.slice(0, -4) : null;
+    };
+
+    //Section list of the settings page: hover or click shows that section, the list keeps the remote
+    var BrowserTestSettingsNav = function (event) {
+        var item = event.target.closest ? event.target.closest('.settings_nav_item') : null;
+
+        if (!item) return false;
+
+        var group = parseInt(item.id.split('_').pop(), 10);
+
+        if (!Settings_NavFocus) Settings_NavGoOut();
+        if (group !== Settings_GroupPos) Settings_ShowGroup(group);
+
+        return true;
+    };
+
     settings_holder.onmousemove = function (event) {
-        if (!Settings_isVisible()) return;
+        if (!Settings_isVisible() || BrowserTestSettingsNav(event)) return;
 
-        var id = event.target.id,
-            array = id.split('_'),
-            pos = -1,
-            len = array.length - 1,
-            i = 1,
-            key = array[0];
+        //any part of an option card focuses it, keys may have several "_" so take it from the card id (key_div)
+        var key = BrowserTestSettingsKey(event),
+            pos = key ? Settings_value_keys.indexOf(key) : -1;
 
-        for (i; i < len; i++) {
-            key += '_' + array[i];
-        }
-
-        pos = Settings_value_keys.indexOf(key);
-
-        if (pos > -1) {
+        if (pos > -1 && (pos !== Settings_cursorY || Settings_NavFocus)) {
             Settings_RemoveInputFocus();
             Settings_cursorY = pos;
             Settings_inputFocus(Settings_cursorY);
@@ -253,21 +264,27 @@ function BrowserTestFun() {
     };
 
     settings_holder.onclick = function (event) {
-        if (!Settings_isVisible()) return;
+        if (!Settings_isVisible() || BrowserTestSettingsNav(event)) return;
 
-        var id = event.target.id,
-            array = id.split('_');
+        var key = BrowserTestSettingsKey(event),
+            id = event.target.id;
 
-        if (array.length > 1) {
-            var key = array[0] + '_' + array[1];
+        if (!key) return;
 
-            if (Main_A_includes_B(id, 'left')) {
-                Settings_handleKeyLeft(key);
-            } else if (Main_A_includes_B(id, 'right')) {
+        if (Main_A_includes_B(id, 'arrow_left')) {
+            Settings_handleKeyLeft(key);
+        } else if (Main_A_includes_B(id, 'arrow_right')) {
+            Settings_handleKeyRight(key);
+        } else if (Settings_Obj_length(key)) {
+            //a click on the card steps to the next value, wrapping to the first
+            if (Settings_Obj_default(key) < Settings_Obj_length(key)) {
                 Settings_handleKeyRight(key);
             } else {
-                Settings_KeyEnter(true);
+                Settings_value[key].defaultValue = 0;
+                Settings_ChangeSettings(Settings_cursorY);
             }
+        } else {
+            Settings_KeyEnter(true);
         }
     };
 
@@ -601,8 +618,6 @@ function BrowserTestFun() {
                 if (sidepannel_pos === 2) Sidepannel_AddFocusMain();
 
                 Sidepannel_KeyEnter();
-            } else if (Main_A_includes_B(id, 'side_panel_top_text_empty')) {
-                Sidepannel_MainKeyLeft();
             } else if (Main_A_includes_B(id, 'side_panel_back_main_menu')) {
                 Sidepannel_userLiveKeyRight();
             }

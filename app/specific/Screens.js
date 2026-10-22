@@ -205,6 +205,10 @@ function Screens_first_init() {
         Main_GoBefore = Main_onNewIntentGetScreen(obj);
         Main_values.Play_WasPlaying = 0;
         StartUser = false;
+    } else if (AddUser_UserHasToken()) {
+        //Signed in: the app opens on Home, the followed live channels, instead of the last screen
+        Main_GoBefore = Main_UserLive;
+        Main_values.Main_Home = true;
     }
 
     if (Main_values.Play_WasPlaying !== 1 || StartUser) {
@@ -225,7 +229,12 @@ function Screens_first_init() {
             Main_GoBefore === Main_HistoryClip ||
             Main_GoBefore === Main_Blocked)
     ) {
-        Main_GoBefore = Main_Live;
+        Main_GoBefore = Main_Featured;
+    }
+
+    //Live, Videos, Clips and followed videos were removed from the menu, a saved start on them opens Featured
+    if (Main_GoBefore === Main_Live || Main_GoBefore === Main_Vod || Main_GoBefore === Main_Clip || Main_GoBefore === Main_UserVod) {
+        Main_GoBefore = AddUser_UserHasToken() ? Main_UserLive : Main_Featured;
     }
 
     Main_values.API_Change = false;
@@ -393,6 +402,10 @@ function Screens_StartLoad(key) {
     ScreenObj[key].skippedCellLoadMore = false;
     ScreenObj[key].LoadOneMoreTimeForced = false;
     ScreenObj[key].LoadAllLangForced = false;
+    //Home featured rows, see ScreensObj_HomeLoadFeatured
+    ScreenObj[key].homeFeaturedRequested = false;
+    ScreenObj[key].homeFeaturedRow = -1;
+    if (ScreenObj[key].homeRowClass) ScreenObj[key].rowClass = ScreenObj[key].homeRowClass;
 
     if (key === Main_values.Main_Go) {
         Main_CounterDialogRst();
@@ -716,7 +729,7 @@ function Screens_createCellGame(id, idArray, valuesArray, key) {
         '" class="stream_info_game_name">' +
         valuesArray[1] +
         '</div>' +
-        (valuesArray[2] !== '' ? '<div class="stream_info_live" style="width: 100%; display: inline-block;">' + valuesArray[2] + '</div>' : '') +
+        (valuesArray[2] !== '' ? '<div class="game_meta">' + valuesArray[2] + '</div>' : '') +
         '</div></div></div></div>'
     );
 }
@@ -2033,7 +2046,7 @@ function Screens_BasicExit(before, key) {
     if (Main_isControlsDialogVisible()) Main_HideControlsDialog();
     else if (Main_isAboutDialogVisible()) Main_HideAboutDialog();
     else {
-        if (before === ScreenObj[key].screen) Main_values.Main_Go = Main_Live;
+        if (before === ScreenObj[key].screen) Main_values.Main_Go = Main_Featured;
         else Main_values.Main_Go = before;
         Screens_exit(key);
     }
@@ -2243,7 +2256,8 @@ function Screens_handleKeyDown(key, event) {
                         Sidepannel_Go(Main_UserChannels);
                     } else {
                         ScreenObj[key].IsOpen = Main_games;
-                        Sidepannel_Go(Main_Vod);
+                        //no Videos screen in the menu any more
+                        Sidepannel_Go(Main_Featured);
                     }
                 } else Sidepannel_Go(ScreenObj[key].key_pgDown);
             }
@@ -4031,10 +4045,8 @@ function Screens_SetLastRefresh(key) {
     )
         return;
 
-    Main_innerHTML(
-        'label_last_refresh',
-        STR_SPACE_HTML + '(' + STR_LAST_REFRESH + Play_timeDay(new Date().getTime() - ScreenObj[key].lastRefresh) + ')'
-    );
+    //Shown next to the screen title in the top bar
+    Main_innerHTML('label_last_refresh', STR_LAST_REFRESH + ' ' + Play_timeDay(new Date().getTime() - ScreenObj[key].lastRefresh));
 }
 
 function Screens_RefreshTimeout(key) {
@@ -4218,18 +4230,9 @@ function AGame_setFollow() {
     if (Main_values.Main_Go !== Main_aGame) return;
 
     if (AGame_following) {
-        Main_innerHTML(
-            ScreenObj[Main_aGame].ids[2] + '-1_2',
-            '<i class="icon-heart" style="color: #6441a4; font-size: 100%;"></i>' + STR_SPACE_HTML + STR_SPACE + STR_FOLLOWING
-        );
+        Main_innerHTML(ScreenObj[Main_aGame].ids[2] + '-1_2', ScreensObj_SwitchLabel('follows', STR_FOLLOWING, true));
     } else {
-        Main_innerHTML(
-            ScreenObj[Main_aGame].ids[2] + '-1_2',
-            '<i class="icon-heart-o" style="color: #FFFFFF; font-size: 100%; "></i>' +
-                STR_SPACE_HTML +
-                STR_SPACE_HTML +
-                (AddUser_UserIsSet() ? STR_FOLLOW : STR_NOKEY)
-        );
+        Main_innerHTML(ScreenObj[Main_aGame].ids[2] + '-1_2', ScreensObj_SwitchLabel('follows', AddUser_UserIsSet() ? STR_FOLLOW : STR_NOKEY));
     }
 }
 

@@ -1,0 +1,78 @@
+# Builds the Android TV APK (debug signed, installs next to the original app as com.fgl27.twitch.debug).
+# Run it from the Actions tab (Run workflow) or by changing apk/, the APK is attached to the run as "SmartTwitchTV-lite-apk".
+name: APK
+
+on:
+    push:
+        branches: [master]
+        paths:
+            - 'apk/**'
+            - '.github/workflows/apk.yml'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            # apk/settings.gradle expects the modified AndroidX Media next to the project: ../../media from apk/
+            - uses: actions/checkout@v4
+              with:
+                  path: SmartTwitchTV
+
+            - uses: actions/checkout@v4
+              with:
+                  repository: fgl27/media
+                  ref: release
+                  path: media
+
+            - uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: 17
+
+            - uses: gradle/actions/setup-gradle@v4
+
+            # The author's Firebase config is not in the repository; a placeholder lets the google-services plugin
+            # and FirebaseApp.initializeApp work, crash reports just go nowhere
+            - name: Placeholder google-services.json
+              run: |
+                  cat > SmartTwitchTV/apk/app/google-services.json <<'EOF'
+                  {
+                    "project_info": {
+                      "project_number": "000000000000",
+                      "project_id": "smarttwitchtv-lite",
+                      "storage_bucket": "smarttwitchtv-lite.appspot.com"
+                    },
+                    "client": [
+                      {
+                        "client_info": {
+                          "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                          "android_client_info": { "package_name": "com.fgl27.twitch" }
+                        },
+                        "api_key": [{ "current_key": "AIzaSyA00000000000000000000000000000000" }]
+                      },
+                      {
+                        "client_info": {
+                          "mobilesdk_app_id": "1:000000000000:android:0000000000000001",
+                          "android_client_info": { "package_name": "com.fgl27.twitch.debug" }
+                        },
+                        "api_key": [{ "current_key": "AIzaSyA00000000000000000000000000000000" }]
+                      }
+                    ],
+                    "configuration_version": "1"
+                  }
+                  EOF
+
+            - name: Build
+              working-directory: SmartTwitchTV/apk
+              run: |
+                  chmod +x gradlew
+                  ./gradlew assembleDebug --no-daemon
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: SmartTwitchTV-lite-apk
+                  path: SmartTwitchTV/apk/app/build/outputs/apk/debug/*.apk

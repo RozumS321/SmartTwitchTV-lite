@@ -93,10 +93,7 @@ function PlayClip_Start() {
 
     Main_textContentWithEle(Play_BottonIcons_Progress_CurrentTime, Play_timeS(0));
 
-    Main_innerHTMLWithEle(
-        Play_BottonIcons_Pause,
-        '<div id="pause_button_icon_holder"><i id="pause_button_icon" class="pause_button3d icon-pause"></i> </div>'
-    );
+    Main_innerHTMLWithEle(Play_BottonIcons_Pause, Play_GetPlayPauseIcon(true));
     Main_ShowElementWithEle(Play_Controls_Holder);
 
     UserLiveFeed_PreventHide = false;
@@ -606,6 +603,7 @@ function PlayClip_qualityReset() {
 }
 
 function PlayClip_showPanel() {
+    Play_SetInfoBadge(2);
     PlayVod_RefreshProgressBarrStart(false, 2);
     Play_CleanHideExit();
     Play_ForceShowPannel();

@@ -52,7 +52,7 @@ function Users_init() {
     }
 
     if (!AddUser_IsUserSet()) {
-        Main_values.Main_Go = Main_Live;
+        Main_values.Main_Go = Main_Featured;
         Users_exit();
         Main_SwitchScreen();
         return;
@@ -125,7 +125,10 @@ function Users_loadData() {
         '" class="stream_thumbnail_user" ><div id="' +
         Users_ids[1] +
         '0_0' +
-        '" class="stream_thumbnail_channel_img"></div>' +
+        //Add account: a dashed circle with a plus, same size as the avatars next to it
+        '" class="stream_thumbnail_channel_img user_add_circle">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">' +
+        '<path d="M12 5v14M5 12h14"></path></svg></div>' +
         '<div id="' +
         Users_ids[2] +
         '0_0' +
@@ -135,13 +138,7 @@ function Users_loadData() {
         '0_0' +
         '" class="stream_info_user_name">' +
         STR_USER_ADD +
-        '</div><div id="' +
-        Users_ids[6] +
-        '0_0' +
-        '"style="color:#FFFFFF;font-size: 17vh; text-align: center; transform: translateY(-24.5vh);"><i id="' +
-        Users_ids[7] +
-        '0_0' +
-        '" class="icon-user-plus" ></i></div></div></div>';
+        '</div></div></div>';
 
     row.appendChild(div);
 
