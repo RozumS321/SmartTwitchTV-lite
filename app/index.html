@@ -30,13 +30,16 @@
         <link rel="preconnect" href="https://api.twitch.tv/" />
         <link rel="dns-prefetch" href="https://static-cdn.jtvnw.net/" />
         <link rel="preconnect" href="https://static-cdn.jtvnw.net/" />
-        <link rel="dns-prefetch" href="https://twemoji.maxcdn.com" />
-        <link rel="preconnect" href="https://twemoji.maxcdn.com" />
+        <!-- GQL: most of the app's requests (featured, live, clips, channel info) -->
+        <link rel="dns-prefetch" href="https://gql.twitch.tv/" />
+        <link rel="preconnect" href="https://gql.twitch.tv/" />
+        <!-- emoji images (app/thirdparty/twemoji.js) -->
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
         <link rel="dns-prefetch" href="https://api.frankerfacez.com" />
         <link rel="preconnect" href="https://api.frankerfacez.com" />
         <link rel="dns-prefetch" href="https://api.betterttv.net" />
         <link rel="preconnect" href="https://api.betterttv.net" />
-        <link rel="dns-prefetch" href="https://api.betterttv.net" />
         <link rel="preconnect" href="https://badges.twitch.tv" />
         <link rel="stylesheet" href="../release/githubio/css/icons.css" />
         <title>SmartTV Twitch</title>
@@ -5393,18 +5396,19 @@
                 width: calc(100% - 8vh);
             }
 
-            /* Previews are dimmed a little so the focused one stands out */
+            /* Previews are dimmed a little so the focused one stands out. Opacity over the dark feed instead of
+               filter: brightness(), a filter on every preview is costly to paint on TV boxes */
             #user_feed .stream_thumbnail_live_img,
             #user_feed .stream_thumbnail_feed_game {
-                filter: brightness(0.72);
-                transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+                opacity: 0.72;
+                transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
             }
 
             #user_feed .feed_thumbnail_focused .stream_thumbnail_live_img,
             #user_feed .feed_thumbnail_focused_no_ani .stream_thumbnail_live_img,
             #user_feed .feed_thumbnail_focused .stream_thumbnail_feed_game,
             #user_feed .feed_thumbnail_focused_no_ani .stream_thumbnail_feed_game {
-                filter: none;
+                opacity: 1;
             }
 
             #user_feed .feed_thumbnail_focused .stream_info_live_title,

@@ -114,8 +114,11 @@ var Main_values = {
     HistoryPos: 0
 };
 
-var Main_VideoSizeAll = ['384x216', '512x288', '640x360', '896x504', '1280x720'];
-var Main_GameSizeAll = ['179x250', '272x380', '340x475', '476x665', '773x1080'];
+//Thumbnail sizes for the "thumbnail quality" setting (very low ... very high), sized for this fork's grids:
+//a live card is about 390px wide at 1080p (4 columns), a category about 230px (6 columns); "normal" leaves a little
+//headroom for sharpness instead of downloading and decoding images much bigger than the card
+var Main_VideoSizeAll = ['320x180', '400x225', '480x270', '640x360', '960x540'];
+var Main_GameSizeAll = ['144x200', '188x262', '285x398', '340x475', '476x665'];
 var Main_SidePannelSizeAll = ['640x360', '896x504', '1280x720', '1536x864', '1920x1080'];
 var Main_SidePannelSize = '1280x720';
 var Main_VideoSize = '640x360';

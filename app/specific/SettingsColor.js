@@ -432,7 +432,7 @@ function SettingsColor_SetAnimationStyle(pos) {
             //Redesign: thick ring with a dark gap so the focus reads from the couch
             '.feed_thumbnail_focused_no_ani,.feed_thumbnail_focused,.stream_thumbnail_focused_no_ani,.stream_thumbnail_focused {box-shadow:0 0 0 0.45vh #0f0f13,0 0 0 1.1vh ' +
             border +
-            ',0 2vh 4vh rgba(0,0,0,0.6);border-radius:1vh;' +
+            ';border-radius:1vh;' +
             (animate ? 'transform:scale(1.03);' : '') +
             '}' +
             //Category cards: the ring goes around the box art only, the name and stats stay on the page background
@@ -442,32 +442,32 @@ function SettingsColor_SetAnimationStyle(pos) {
             '}' +
             '.stream_thumbnail_focused .stream_thumbnail_live_game,.stream_thumbnail_focused_no_ani .stream_thumbnail_live_game{box-shadow:0 0 0 0.45vh #0f0f13,0 0 0 1.1vh ' +
             border +
-            ',0 2vh 4vh rgba(0,0,0,0.6);}' +
+            ';}' +
             //Account cards: the ring goes around the round avatar
             '.stream_thumbnail_user.stream_thumbnail_focused,.stream_thumbnail_user.stream_thumbnail_focused_no_ani{background-color:transparent !important;border-color:transparent !important;box-shadow:none;' +
             (animate ? 'transform:scale(1.04);transform-origin:50% 0;' : '') +
             '}' +
             '.stream_thumbnail_user.stream_thumbnail_focused .stream_thumbnail_channel_img,.stream_thumbnail_user.stream_thumbnail_focused_no_ani .stream_thumbnail_channel_img{box-shadow:0 0 0 0.5vh #0f0f13,0 0 0 1.2vh ' +
             border +
-            ',0 2vh 4vh rgba(0,0,0,0.6);}' +
+            ';}' +
             //Live, VOD and clip grid cards: same idea, the ring goes around the preview and the card grows down
             '.stream_thumbnail_live.stream_thumbnail_focused,.stream_thumbnail_live.stream_thumbnail_focused_no_ani{background-color:transparent !important;border-color:transparent !important;box-shadow:none;' +
             (animate ? 'transform:scale(1.03);transform-origin:50% 0;' : '') +
             '}' +
             '.stream_thumbnail_focused .stream_thumbnail_live_img,.stream_thumbnail_focused_no_ani .stream_thumbnail_live_img{box-shadow:0 0 0 0.45vh #0f0f13,0 0 0 1.1vh ' +
             border +
-            ',0 2vh 4vh rgba(0,0,0,0.6);}' +
+            ';}' +
             //Player feed cards work the same way: ring around the preview, text on the feed background
             '.stream_thumbnail_player_feed.feed_thumbnail_focused,.stream_thumbnail_player_feed.feed_thumbnail_focused_no_ani,' +
             '.stream_thumbnail_game_feed.feed_thumbnail_focused,.stream_thumbnail_game_feed.feed_thumbnail_focused_no_ani{background-color:transparent !important;border-color:transparent !important;box-shadow:none;}' +
             '.feed_thumbnail_focused .stream_thumbnail_live_img,.feed_thumbnail_focused_no_ani .stream_thumbnail_live_img,' +
             '.feed_thumbnail_focused .stream_thumbnail_feed_game,.feed_thumbnail_focused_no_ani .stream_thumbnail_feed_game{box-shadow:0 0 0 0.4vh #0f0f13,0 0 0 0.9vh ' +
             border +
-            ',0 1.6vh 3.2vh rgba(0,0,0,0.6);}' +
+            ';}' +
             //feed_thumbnail_focused same animation time as user_feed_scroll
-            '.feed_thumbnail_focused {transition:background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s,color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s,box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;}' +
+            '.feed_thumbnail_focused {transition:transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0s;}' +
             //stream_thumbnail_focused same animation time as animate_height_transition
-            '.stream_thumbnail_focused {transition:background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,border-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;}';
+            '.stream_thumbnail_focused {transition:transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;}';
 
     cssClass +=
         '.vod_watched{background:' +
