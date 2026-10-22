@@ -1,5 +1,7 @@
 # Builds the web app (release/ via release/scripts/maker.js) and publishes the repository on GitHub Pages,
-# the APK loads https://rozums321.github.io/SmartTwitchTV-lite/release/index.html (apk/.../Constants.java)
+# the APK loads https://rozums321.github.io/SmartTwitchTV-lite/release/index.html (apk/.../Constants.java).
+# Before the build app/general/version.js is stamped (.github/scripts/stamp-version.js), that is what the app's
+# update check reads: a new web build makes a running app offer a reload, a new APK release offers the download.
 name: Web app (GitHub Pages)
 
 on:
@@ -7,6 +9,10 @@ on:
         branches: [master]
         paths-ignore:
             - 'apk/**'
+    # a new APK release has to reach version.json, so the apps offer it
+    workflow_run:
+        workflows: [APK]
+        types: [completed]
     workflow_dispatch:
 
 permissions:
@@ -30,6 +36,18 @@ jobs:
 
             - name: Install the release tools (package.json)
               run: npm install --no-audit --no-fund
+
+            # Web tag: above the original app's 727 and growing with every run.
+            # APK code: the latest release (apk-<code>), or the code in apk/versions.gradle when there is none yet.
+            - name: Stamp version.js
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  apk_code=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName 2>/dev/null | sed 's/^apk-//')
+                  if [ -z "$apk_code" ]; then
+                      apk_code=$(grep -oP 'publishVersionCode:\s*\K\d+' apk/versions.gradle)
+                  fi
+                  node .github/scripts/stamp-version.js "$((1000 + GITHUB_RUN_NUMBER))" "$apk_code" "$(git log -1 --format=%s)"
 
             # jshint runs first, the build stops (and the job fails) on any warning
             - name: Build release/

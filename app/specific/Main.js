@@ -1147,9 +1147,10 @@ function Main_CheckUpdate(forceUpdate) {
     if (checkUpdates) {
         if (Main_HasUpdate && Main_isUpdateDialogVisible() && Settings_value.update_background.defaultValue && !forceUpdate) return;
 
-        if (Main_A_includes_B(window.location.href, 'https://fgl27.github.io')) {
+        //this fork's site, version.json is stamped by .github/workflows/pages.yml (web build number, latest APK release)
+        if (Main_A_includes_B(window.location.href, 'https://rozums321.github.io')) {
             BaseXmlHttpGet(
-                'https://fgl27.github.io/SmartTwitchTV/release/githubio/version/version.json',
+                'https://rozums321.github.io/SmartTwitchTV-lite/release/githubio/version/version.json',
                 Main_CheckUpdateResult,
                 Main_CheckUpdateFail
             );
@@ -3453,30 +3454,11 @@ function gtag() {
     dataLayer.push(arguments);
 }
 
-var skipfirebase = false;
+//This fork sends no analytics: the Firebase / Google Analytics scripts are not loaded (index.html) and every
+//Main_Event* function returns at its skipfirebase check
+var skipfirebase = true;
 function Main_Startfirebase() {
-    var firebaseConfig = {
-        apiKey: 'AIzaSyAr2tuLGB5lvredaqU2KWW4p8Yg7sudbzI',
-        authDomain: 'smarttv-twitch-web-android.firebaseapp.com',
-        databaseURL: 'https://smarttv-twitch-web-android.firebaseio.com',
-        projectId: 'smarttv-twitch-web-android',
-        storageBucket: 'smarttv-twitch-web-android.appspot.com',
-        messagingSenderId: '871032203366',
-        appId: '1:871032203366:web:922c0cf93432bbe1e7a5a7',
-        measurementId: 'G-8YQ2JGNYDP'
-    };
-
-    try {
-        if (!Main_A_includes_B(window.location.href, 'code')) {
-            firebase.initializeApp(firebaseConfig);
-            firebase.analytics();
-
-            gtag('js', new Date());
-        } else skipfirebase = true;
-    } catch (e) {
-        console.log('Main_Startfirebase e ' + e);
-        skipfirebase = true;
-    }
+    skipfirebase = true;
 }
 
 function Main_EventScreen(screen) {

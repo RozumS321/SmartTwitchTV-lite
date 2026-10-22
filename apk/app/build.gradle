@@ -1,10 +1,7 @@
 apply from: '../versions.gradle'
 apply plugin: 'com.android.application'
 
-//Crashlytics
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
-//Crashlytics end
+//No Firebase (Crashlytics / Analytics) in this fork
 
 android {
     namespace "com.fgl27.twitch"
@@ -26,6 +23,22 @@ android {
 
     }
 
+    //The APK workflow signs every build with the same key (repository secrets, see .github/workflows/apk.yml),
+    //an in-app update only installs over an APK signed with the same key. Local builds keep the default debug key.
+    def forkStoreFile = System.getenv('SIGN_STORE_FILE')
+
+    signingConfigs {
+        fork {
+            if (forkStoreFile) {
+                storeFile file(forkStoreFile)
+                storeType 'pkcs12'
+                storePassword System.getenv('SIGN_STORE_PASSWORD')
+                keyAlias System.getenv('SIGN_KEY_ALIAS')
+                keyPassword System.getenv('SIGN_STORE_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -37,6 +50,7 @@ android {
         }
         debug {
             applicationIdSuffix ".debug"
+            if (forkStoreFile) signingConfig signingConfigs.fork
         }
     }
 
@@ -81,11 +95,6 @@ dependencies {
     implementation project(':media3-lib-exoplayer-hls')
     //implementation project(':media-lib-decoder-av1')
 
-    //Crashlytics
-    implementation platform('com.google.firebase:firebase-bom:33.14.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-crashlytics'
-    //Crashlytics end
 
     implementation 'androidx.leanback:leanback:1.2.0'
     implementation 'androidx.webkit:webkit:1.14.0'
