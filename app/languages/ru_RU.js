@@ -122,8 +122,6 @@ function ru_RULang() {
     STR_HOME = 'Главная';
     STR_HOME_LIVE = 'Подписки в эфире';
     STR_FOLLOWED_GAMES = 'Мои категории';
-    //Player info badge: live, video, clip (Play_SetInfoBadge)
-    STR_PLAYER_BADGES = ['В эфире', 'Запись', 'Клип'];
     //Settings sections (Settings_Groups): title, hint
     STR_SETTINGS_GROUPS = [
         ['Основные', 'Язык, контент, запуск'],

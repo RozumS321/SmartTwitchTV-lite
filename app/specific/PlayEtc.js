@@ -4212,6 +4212,7 @@ function Play_IconsAddFocus() {
     Main_AddClassWithEle(Play_controls[Play_PanelCounter].button, Play_BottonIcons_Focus_Class);
 
     Play_controls[Play_PanelCounter].button_text.style.opacity = '1';
+    Play_ControlListShow(Play_controls[Play_PanelCounter].doc_list ? Play_controls[Play_PanelCounter] : null);
 
     if (Play_controls[Play_PanelCounter].isChat && (!Play_isChatShown() || !Play_isFullScreen)) {
         Play_controls[Play_controlsChat].button_text.style.opacity = '1';
@@ -4220,9 +4221,28 @@ function Play_IconsAddFocus() {
     }
 }
 
+//The quality list (Play_QualityList) is a panel over the progress bar, which sits on another layer:
+//while it is open the bar is hidden and the list takes clicks
+var Play_ControlListOpen = null;
+function Play_ControlListShow(obj) {
+    if (Play_ControlListOpen && Play_ControlListOpen !== obj) {
+        Main_RemoveClassWithEle(Play_ControlListOpen.button_text, 'controls_list_open');
+    }
+
+    Play_ControlListOpen = obj;
+
+    if (obj) {
+        Main_AddClassWithEle(obj.button_text, 'controls_list_open');
+        Main_AddClass('progress_pause_holder', 'progress_under_list');
+    } else {
+        Main_RemoveClass('progress_pause_holder', 'progress_under_list');
+    }
+}
+
 function Play_IconsRemoveFocus() {
     Main_RemoveClassWithEle(Play_controls[Play_PanelCounter].button, Play_BottonIcons_Focus_Class);
     Play_controls[Play_PanelCounter].button_text.style.opacity = '0';
+    Play_ControlListShow(null);
     //in case chat is disable and the warning is showing because some chat option was selected
     Play_controls[Play_controlsChat].button_text.style.opacity = '0';
 }

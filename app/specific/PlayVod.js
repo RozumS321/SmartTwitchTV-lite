@@ -604,7 +604,6 @@ function PlayVod_qualityReset() {
 }
 
 function PlayVod_showPanel(autoHide) {
-    Play_SetInfoBadge(1);
     if (Play_getQualitiesFail) Play_getQualities(2, true);
 
     PlayVod_SetChapters();

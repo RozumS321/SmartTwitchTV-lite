@@ -1618,18 +1618,7 @@ function Play_qualityReset() {
     if (!Main_A_includes_B(Play_data.qualityPlaying, 'Auto')) Play_SetHtmlQuality(Play_info_quality);
 }
 
-//Badge next to the channel name in the player info: live, video (VOD) or clip, 0 1 2 like STR_PLAYER_BADGES
-function Play_SetInfoBadge(type) {
-    var doc = Main_getElementById('stream_info_badge');
-
-    if (!doc || !STR_PLAYER_BADGES) return;
-
-    doc.className = 'stream_info_badge stream_info_badge_' + type;
-    Main_textContentWithEle(doc, STR_PLAYER_BADGES[type]);
-}
-
 function Play_showPanel() {
-    Play_SetInfoBadge(0);
     Play_updateStreamInfo();
 
     if (Play_getQualitiesFail) {
@@ -1980,6 +1969,7 @@ function Play_QualityList(getQualitiesCount, qualityIndex, obj) {
         doc.className = 'controls_list';
         obj.button_text.appendChild(doc);
         obj.doc_list = doc;
+        doc.onclick = Play_QualityListClick;
         Main_AddClassWithEle(obj.button_text, 'controls_has_list');
         //small accent label above the title, like the design
         obj.button_text.setAttribute('data-kicker', STR_SETTINGS_GROUPS ? STR_SETTINGS_GROUPS[1][0] : STR_SETTINGS_PLAYER);
@@ -1996,7 +1986,9 @@ function Play_QualityList(getQualitiesCount, qualityIndex, obj) {
         parts = id.split(' | ');
 
         html +=
-            '<div class="controls_list_item' +
+            '<div data-pos="' +
+            i +
+            '" class="controls_list_item' +
             (i === qualityIndex ? ' controls_list_focus' : '') +
             (id && id === source.playing ? ' controls_list_playing' : '') +
             '"><span class="controls_list_label">' +
@@ -2007,6 +1999,24 @@ function Play_QualityList(getQualitiesCount, qualityIndex, obj) {
     }
 
     doc.innerHTML = html;
+}
+
+//Mouse (browser) or touch: a click on a row picks that quality and applies it, like Up/Down then Enter
+function Play_QualityListClick(event) {
+    var item = event.target.closest ? event.target.closest('.controls_list_item') : null;
+
+    if (!item) return;
+
+    event.stopPropagation();
+
+    var pos = parseInt(item.getAttribute('data-pos'), 10),
+        PlayVodClip = PlayClip_isOn ? 3 : PlayVod_isOn ? 2 : 1;
+
+    if (PlayVodClip === 1) Play_data.qualityIndex = pos;
+    else if (PlayVodClip === 2) PlayVod_qualityIndex = pos;
+    else PlayClip_qualityIndex = pos;
+
+    Play_controls[Play_controlsQuality].enterKey(PlayVodClip);
 }
 
 function Play_qualityIndexReset() {

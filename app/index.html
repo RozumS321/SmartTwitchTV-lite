@@ -3693,33 +3693,6 @@
                 color: var(--tv-muted);
             }
 
-            /* Player info badge next to the channel name: live red, video and clip quiet (Play_SetInfoBadge) */
-            .stream_info_badge {
-                display: inline-block;
-                margin-left: 1.4vh;
-                padding: 0.5vh 1.1vh;
-                border-radius: 0.8vh;
-                vertical-align: middle;
-                background-color: var(--tv-card);
-                font-family: 'Manrope', 'Roboto', sans-serif;
-                font-weight: 700;
-                font-size: 1.5vh;
-                line-height: 1.2;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                text-shadow: none;
-                color: var(--tv-text);
-            }
-
-            .stream_info_badge:empty {
-                display: none;
-            }
-
-            .stream_info_badge_0 {
-                background-color: var(--tv-live);
-                color: #ffffff;
-            }
-
             /* VOD and clip seeking: the preview frame and its time like the design, a light ring and a light chip */
             .seek_previews {
                 border-radius: 1vh;
@@ -3815,6 +3788,20 @@
                 background-color: var(--tv-panel);
                 box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.6);
                 white-space: normal;
+            }
+
+            /* open (its button has the focus, Play_ControlListShow): rows take clicks, the progress bar
+               (another layer, it would cross the panel) is hidden */
+            .controls_text_title_holder.controls_list_open {
+                pointer-events: auto;
+            }
+
+            .controls_list_item {
+                cursor: pointer;
+            }
+
+            .progress_pause_holder.progress_under_list {
+                visibility: hidden;
             }
 
             .controls_has_list::before {
@@ -6473,8 +6460,6 @@
                             <div class="playmaininfo">
                                 <div style="font-size: 155%">
                                     <div id="stream_info_name" style="display: inline-block; max-width: 88%" class="class_bold multi_info_line"></div>
-                                    <!-- live / video / clip, Play_SetInfoBadge -->
-                                    <span id="stream_info_badge" class="stream_info_badge"></span>
                                     <div id="stream_info_audio" class="audio_icon"></div>
                                 </div>
                                 <div id="stream_info_title"></div>

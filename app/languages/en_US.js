@@ -124,8 +124,6 @@ function en_USLang() {
     STR_HOME = 'Home';
     STR_HOME_LIVE = 'Followed live';
     STR_FOLLOWED_GAMES = 'My categories';
-    //Player info badge: live, video, clip (Play_SetInfoBadge)
-    STR_PLAYER_BADGES = ['Live', 'Video', 'Clip'];
     //Settings sections (Settings_Groups): title, hint
     STR_SETTINGS_GROUPS = [
         ['General', 'Language, content, start'],

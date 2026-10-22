@@ -603,7 +603,6 @@ function PlayClip_qualityReset() {
 }
 
 function PlayClip_showPanel() {
-    Play_SetInfoBadge(2);
     PlayVod_RefreshProgressBarrStart(false, 2);
     Play_CleanHideExit();
     Play_ForceShowPannel();

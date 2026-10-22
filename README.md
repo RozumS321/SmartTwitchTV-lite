@@ -84,7 +84,7 @@
   В настройках репозитория должно быть: **Settings → Pages → Source: GitHub Actions**.
 - [`.github/workflows/apk.yml`](.github/workflows/apk.yml) — собирает APK вместе с изменённой автором
   библиотекой плеера [fgl27/media](https://github.com/fgl27/media) и выкладывает его релизом `apk-<номер>`.
-  Запускается вручную (Run workflow) или при изменениях в `apk/`.
+  Запускается только вручную: Actions → APK → Run workflow.
   Все сборки подписываются одним ключом из секретов репозитория `SIGN_KEYSTORE_BASE64` и `SIGN_STORE_PASSWORD`,
   иначе обновление не встанет поверх старой версии. Без секретов APK только прикладывается к запуску, без релиза.
 - Перед сборкой сайта [`.github/scripts/stamp-version.js`](.github/scripts/stamp-version.js) проставляет в
